@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
 import { motion } from 'framer-motion';
 import { Package, Truck, CheckCircle2, MapPin } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 interface Order {
   id: number;
@@ -20,7 +21,7 @@ export default function Orders() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   useEffect(() => {
-    fetch('/api/orders')
+    fetch(`${API_BASE_URL}/api/orders`)
       .then(res => res.json())
       .then(data => {
         setOrders(data);

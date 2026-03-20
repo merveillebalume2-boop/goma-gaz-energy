@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, CartesianGrid } from 'recharts';
 import { DollarSign, Users, TrendingUp } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 interface Stats {
   salesTotal: number;
@@ -16,7 +17,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/stats')
+    fetch(`${API_BASE_URL}/api/stats`)
       .then(res => res.json())
       .then(data => {
         setStats(data);

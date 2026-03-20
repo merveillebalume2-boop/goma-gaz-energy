@@ -101,7 +101,12 @@ app.get('/api/stats', (req, res) => {
   }
 });
 
-const PORT = 3001;
+// Route de santé pour Render
+app.get('/', (req, res) => {
+  res.send('API Goma Gaz Energy est en ligne !');
+});
+
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Serveur Express démarré sur le port ${PORT}`);
 });

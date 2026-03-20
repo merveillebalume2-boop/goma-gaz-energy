@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, CheckCircle, MapPin, X, Loader2, Flame, Package } from 'lucide-react';
 import { useCart, type Product } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 
 export default function Shop() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -11,7 +12,7 @@ export default function Shop() {
   const { addToCart, cartCount, total } = useCart();
 
   useEffect(() => {
-    fetch('/api/products')
+    fetch(`${API_BASE_URL}/api/products`)
       .then(res => res.json())
       .then(data => {
         setProducts(data);
@@ -146,7 +147,7 @@ function CheckoutModal({ onClose }: { onClose: () => void }) {
     };
 
     try {
-      const res = await fetch('/api/orders', {
+      const res = await fetch(`${API_BASE_URL}/api/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
