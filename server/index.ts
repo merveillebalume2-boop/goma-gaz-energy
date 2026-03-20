@@ -102,8 +102,22 @@ app.get('/api/stats', (req, res) => {
 });
 
 // Route de santé pour Render
-app.get('/', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.send('API Goma Gaz Energy est en ligne !');
+});
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Servir les fichiers statiques de React (le dossier dist)
+app.use(express.static(path.join(__dirname, '../dist')));
+
+// Pour toutes les autres requêtes qui ne sont pas des API, renvoyer l'application React
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
 const PORT = process.env.PORT || 3001;
