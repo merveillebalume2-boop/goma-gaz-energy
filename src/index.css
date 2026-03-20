@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-blue-900: #0f172a; /* slate-900 */
+  --color-brand-blue-950: #020617; /* slate-950 */
+  --color-brand-orange-500: #f97316; /* orange-500 */
+  --radius-xl: 3rem; /* coins très arrondis */
+}
+
+body {
+  background-color: var(--color-brand-blue-950);
+  color: #ffffff;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-slate-900/40 backdrop-blur-md border border-white/10;
+  }
+}
