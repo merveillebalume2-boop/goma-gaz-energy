@@ -38,10 +38,10 @@ db.exec(`
 const count = db.prepare('SELECT COUNT(*) as count FROM products').get() as { count: number };
 
 const products = [
-  { name: 'Bouteille Gaz 6kg',   description: 'Idéale pour les petits foyers et studios', price: 15.00, image: '/gaz_6kg.png',     category: 'bottle' },
-  { name: 'Bouteille Gaz 12kg',  description: 'La plus populaire pour les familles',       price: 25.00, image: '/gaz_12kg.png',    category: 'bottle' },
-  { name: 'Bouteille Gaz 20kg',  description: 'Pour la restauration et grands consommateurs', price: 40.00, image: '/gaz_20kg.png', category: 'bottle' },
-  { name: 'Kit Complet Brûleur', description: 'Brûleur + Tuyau + Détendeur inclus',        price: 10.00, image: '/kit_bruleur.png', category: 'accessories' },
+  { name: 'Bouteille Gaz 6kg',   description: 'Format compact idéal pour les petits foyers, facile à transporter.', price: 15.00, image: '/gaz_6kg.png',     category: 'bottle' },
+  { name: 'Bouteille Gaz 12kg',  description: 'Le format standard le plus utilisé pour la cuisine familiale quotidienne.', price: 25.00, image: '/gaz_12kg.png',    category: 'bottle' },
+  { name: 'Bouteille Gaz 20kg',  description: 'Grand format haute capacité pour les professionnels et familles nombreuses.', price: 40.00, image: 'https://images.unsplash.com/photo-1621213327685-611ff69e8ee4?w=800&q=80', category: 'bottle' },
+  { name: 'Kit Complet Brûleur', description: 'Ensemble complet comprenant : 1 Brûleur robuste, 1 Tuyau renforcé et 1 Détendeur certifié.', price: 10.00, image: 'https://images.unsplash.com/photo-1590779033100-9f60a05a013d?w=800&q=80', category: 'accessories' },
 ];
 
 if (count.count === 0) {
