@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
 import { motion } from 'framer-motion';
-import { Package, Truck, CheckCircle2, MapPin } from 'lucide-react';
+import { HiCube, HiTruck, HiCheckCircle, HiLocationMarker } from 'react-icons/hi';
 import { API_BASE_URL } from '../config';
 
 interface Order {
@@ -36,9 +36,9 @@ export default function Orders() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'Livré': return <CheckCircle2 className="text-green-500" />;
-      case 'En route': return <Truck className="text-blue-500" />;
-      default: return <Package className="text-orange-500" />;
+      case 'Livré': return <HiCheckCircle className="text-green-500" size={20} />;
+      case 'En route': return <HiTruck className="text-blue-500" size={20} />;
+      default: return <HiCube className="text-orange-500" size={20} />;
     }
   };
 
@@ -119,7 +119,7 @@ export default function Orders() {
             <div className="absolute bottom-6 left-6 right-6 p-6 rounded-[2rem] glass border border-white/10 backdrop-blur-xl flex items-center justify-between z-10">
               <div className="flex items-center gap-4">
                 <div className="h-14 w-14 rounded-[1.5rem] bg-orange-500/20 text-orange-500 flex items-center justify-center">
-                  <MapPin size={24} />
+                  <HiLocationMarker size={24} />
                 </div>
                 <div>
                   <div className="text-sm font-bold text-slate-400 capitalize">Destination</div>
@@ -136,7 +136,7 @@ export default function Orders() {
           </div>
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 space-y-4">
-            <MapPin size={48} className="opacity-20" />
+            <HiLocationMarker size={48} className="opacity-20" />
             <p>Sélectionnez une commande pour la tracer.</p>
           </div>
         )}

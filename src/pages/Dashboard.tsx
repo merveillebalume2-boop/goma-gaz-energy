@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, CartesianGrid } from 'recharts';
-import { DollarSign, Users, TrendingUp } from 'lucide-react';
+import { HiCurrencyDollar, HiUsers, HiTrendingUp } from 'react-icons/hi';
 import { API_BASE_URL } from '../config';
 
 interface Stats {
@@ -39,21 +39,21 @@ export default function Dashboard() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard 
-          icon={<DollarSign size={32} className="text-green-500" />}
+          icon={<HiCurrencyDollar size={32} className="text-green-500" />}
           title="Ventes Totales"
           value={`$${stats.salesTotal.toFixed(2)}`}
           trend="+8.2%"
           delay={0.1}
         />
         <StatCard 
-          icon={<Users size={32} className="text-blue-500" />}
+          icon={<HiUsers size={32} className="text-blue-500" />}
           title="Clients Actifs"
           value={stats.activeClients.toString()}
           trend="+12.5%"
           delay={0.2}
         />
         <StatCard 
-          icon={<TrendingUp size={32} className="text-orange-500" />}
+          icon={<HiTrendingUp size={32} className="text-orange-500" />}
           title="Croissance Mensuelle"
           value={`${stats.growth}%`}
           trend="+2.1%"

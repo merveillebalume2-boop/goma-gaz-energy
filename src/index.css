@@ -1,22 +1,65 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-blue-900: #0f172a; /* slate-900 */
-  --color-brand-blue-950: #020617; /* slate-950 */
-  --color-brand-orange-500: #f97316; /* orange-500 */
-  --radius-xl: 3rem; /* coins très arrondis */
+  --color-brand-blue-900: #0f172a;
+  --color-brand-blue-950: #020617;
+  --color-brand-orange-500: #f97316;
+  --radius-xl: 3rem;
+}
+
+/* ===== MODE SOMBRE (défaut) ===== */
+:root, [data-theme="dark"] {
+  --bg-primary: #020617;
+  --bg-secondary: #0f172a;
+  --bg-card: rgba(15, 23, 42, 0.5);
+  --text-primary: #ffffff;
+  --text-secondary: #94a3b8;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(15, 23, 42, 0.4);
+}
+
+/* ===== MODE CLAIR ===== */
+[data-theme="light"] {
+  --bg-primary: #f1f5f9;
+  --bg-secondary: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.7);
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --border-color: rgba(0, 0, 0, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.6);
 }
 
 body {
-  background-color: var(--color-brand-blue-950);
-  color: #ffffff;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   margin: 0;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 @layer utilities {
   .glass {
-    @apply bg-slate-900/40 backdrop-blur-md border border-white/10;
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
   }
+
+  .text-theme-primary { color: var(--text-primary); }
+  .text-theme-secondary { color: var(--text-secondary); }
+  .bg-theme-primary { background-color: var(--bg-primary); }
+  .bg-theme-secondary { background-color: var(--bg-secondary); }
+  .border-theme { border-color: var(--border-color); }
 }
+
+/* Animation bouton menu flottant */
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
+  70% { box-shadow: 0 0 0 12px rgba(249, 115, 22, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
+}
+
+.fab-pulse {
+  animation: pulse-ring 2s infinite;
+}
+

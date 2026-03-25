@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, CheckCircle, MapPin, X, Loader2, Flame, Package } from 'lucide-react';
+import { HiShoppingCart, HiCheckCircle, HiLocationMarker, HiX, HiFire, HiCube } from 'react-icons/hi';
+import { ImSpinner8 } from 'react-icons/im';
 import { useCart, type Product } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
@@ -45,7 +46,7 @@ export default function Shop() {
             onClick={() => setCheckoutModalOpen(true)}
             className="flex items-center gap-3 bg-orange-500 hover:bg-orange-600 px-8 py-4 rounded-full font-bold shadow-lg shadow-orange-500/20 transition-transform active:scale-95"
           >
-            <ShoppingCart size={20} />
+            <HiShoppingCart size={20} />
             <span>Panier ({cartCount})</span>
             <span className="opacity-70">${total.toFixed(2)}</span>
           </button>
@@ -54,7 +55,7 @@ export default function Shop() {
 
       {loading ? (
         <div className="flex justify-center items-center h-64 text-orange-500">
-          <Loader2 size={40} className="animate-spin" />
+          <ImSpinner8 size={40} className="animate-spin" />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -68,9 +69,9 @@ export default function Shop() {
             >
               <div className="h-48 flex items-center justify-center bg-slate-950/50 border-b border-white/5 group-hover:bg-slate-900 transition-colors">
                 {product.category === 'bottle' ? (
-                  <Flame size={80} className="text-orange-500 group-hover:scale-110 transition-transform duration-700 opacity-80" />
+                  <HiFire size={80} className="text-orange-500 group-hover:scale-110 transition-transform duration-700 opacity-80" />
                 ) : (
-                  <Package size={80} className="text-blue-500 group-hover:scale-110 transition-transform duration-700 opacity-80" />
+                  <HiCube size={80} className="text-blue-500 group-hover:scale-110 transition-transform duration-700 opacity-80" />
                 )}
               </div>
               <div className="p-8 flex-1 flex flex-col relative z-20">
@@ -83,7 +84,7 @@ export default function Shop() {
                     onClick={() => addToCart(product)}
                     className="h-14 w-14 rounded-full bg-white/5 hover:bg-orange-500 flex items-center justify-center transition-colors shadow-inner border border-white/10"
                   >
-                    <CheckCircle size={24} />
+                    <HiCheckCircle size={24} />
                   </button>
                 </div>
               </div>
@@ -176,7 +177,7 @@ function CheckoutModal({ onClose }: { onClose: () => void }) {
         className="glass border border-white/10 p-8 rounded-[3rem] w-full max-w-lg shadow-2xl relative my-8"
       >
         <button onClick={onClose} className="absolute top-6 right-6 p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
-          <X size={20} />
+          <HiX size={20} />
         </button>
         
         <h2 className="text-3xl font-black mb-8 border-b border-white/5 pb-4">Finaliser la commande</h2>
@@ -216,7 +217,7 @@ function CheckoutModal({ onClose }: { onClose: () => void }) {
               onClick={getPosition}
               className={`w-full flex items-center gap-3 justify-center px-6 py-4 rounded-[1.5rem] font-bold border ${gps ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-orange-500/10 border-orange-500/20 text-orange-500 hover:bg-orange-500/20'}`}
             >
-              {locating ? <Loader2 className="animate-spin" size={20} /> : <MapPin size={20} />}
+              {locating ? <ImSpinner8 className="animate-spin" size={20} /> : <HiLocationMarker size={20} />}
               {gps ? 'Position GPS capturée !' : 'Détecter ma position exacte'}
             </button>
           </div>
@@ -226,7 +227,7 @@ function CheckoutModal({ onClose }: { onClose: () => void }) {
             disabled={submitting}
             className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-black text-lg py-5 rounded-[2rem] shadow-[0_0_20px_rgba(249,115,22,0.3)] transition-all active:scale-95 flex justify-center"
           >
-            {submitting ? <Loader2 className="animate-spin" /> : 'Confirmer l\'expédition'}
+            {submitting ? <ImSpinner8 className="animate-spin" size={20} /> : 'Confirmer l\'expédition'}
           </button>
         </form>
       </motion.div>
