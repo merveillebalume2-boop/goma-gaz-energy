@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiShoppingCart, HiCheckCircle, HiLocationMarker, HiX, HiFire, HiCube } from 'react-icons/hi';
+import { HiShoppingCart, HiCheckCircle, HiLocationMarker, HiX } from 'react-icons/hi';
 import { ImSpinner8 } from 'react-icons/im';
 import { useCart, type Product } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
@@ -67,12 +67,12 @@ export default function Shop() {
               transition={{ delay: i * 0.1 }}
               className="glass rounded-[3rem] overflow-hidden flex flex-col group relative"
             >
-              <div className="h-48 flex items-center justify-center bg-slate-950/50 border-b border-white/5 group-hover:bg-slate-900 transition-colors">
-                {product.category === 'bottle' ? (
-                  <HiFire size={80} className="text-orange-500 group-hover:scale-110 transition-transform duration-700 opacity-80" />
-                ) : (
-                  <HiCube size={80} className="text-blue-500 group-hover:scale-110 transition-transform duration-700 opacity-80" />
-                )}
+              <div className="h-48 w-full overflow-hidden bg-white/5 border-b border-white/5 group-hover:bg-white/10 transition-colors flex items-center justify-center p-4">
+                <img 
+                  src={product.image} 
+                  alt={product.name}
+                  className="h-full w-full object-contain group-hover:scale-110 transition-transform duration-700"
+                />
               </div>
               <div className="p-8 flex-1 flex flex-col relative z-20">
                 <span className="text-orange-500 text-sm font-bold tracking-widest uppercase mb-1">{product.category}</span>
