@@ -21,7 +21,7 @@ export default function Home() {
         <div className="relative z-10 max-w-2xl space-y-6">
           <motion.div initial="hidden" animate="visible" variants={fadeIn}>
             <span className="inline-block py-2 px-4 rounded-full bg-orange-500/20 text-orange-500 font-bold mb-4 border border-orange-500/30">
-              L'Énergie de Demain, Aujourd'hui.
+              L'Énergie d'Aujourd'hui  et de Demain.
             </span>
             <h1 className="text-5xl lg:text-7xl font-black text-white leading-tight">
               Propulsez votre <br />
@@ -117,9 +117,10 @@ export default function Home() {
         <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
         <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
-            <h2 className="text-4xl font-black">Notre Impact à l'Est</h2>
+            <h2 className="text-4xl font-black">Notre Impact dans la partie oriental de la RDC</h2>
             <p className="text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              Nous luttons contre la déforestation du parc des Virunga en offrant une alternative accessible au charbon de bois. GOMA GAZ ENERGY n'est pas qu'une entreprise, c'est un mouvement vers un Kivu plus vert.
+              Nous luttons contre la déforestation du parc des Virunga en offrant une alternative accessible au charbon de bois. <br />
+              GOMA GAZ ENERGY n'est pas qu'une entreprise, c'est un mouvement vers un Kivu plus vert.
             </p>
             <motion.div
               initial={{ opacity: 0, x: -20 }}

@@ -34,14 +34,29 @@ db.exec(`
   );
 `);
 
-// Seed products if empty
+// Seed products if empty, otherwise update images
 const count = db.prepare('SELECT COUNT(*) as count FROM products').get() as { count: number };
+
+const products = [
+  { name: 'Bouteille Gaz 6kg',   description: 'Idéale pour les petits foyers et studios', price: 15.00, image: '/gaz_6kg.png',     category: 'bottle' },
+  { name: 'Bouteille Gaz 12kg',  description: 'La plus populaire pour les familles',       price: 25.00, image: '/gaz_12kg.png',    category: 'bottle' },
+  { name: 'Bouteille Gaz 20kg',  description: 'Pour la restauration et grands consommateurs', price: 40.00, image: '/gaz_20kg.png', category: 'bottle' },
+  { name: 'Kit Complet Brûleur', description: 'Brûleur + Tuyau + Détendeur inclus',        price: 10.00, image: '/kit_bruleur.png', category: 'accessories' },
+];
+
 if (count.count === 0) {
+  // Premier démarrage : on insère tout
   const insertProduct = db.prepare('INSERT INTO products (name, description, price, image, category) VALUES (?, ?, ?, ?, ?)');
-  insertProduct.run('Bouteille Gaz 6kg', 'Idéale pour les petits foyers', 15.00, 'https://images.unsplash.com/photo-1621213327685-611ff69e8ee4?w=500&q=80', 'bottle');
-  insertProduct.run('Bouteille Gaz 12kg', 'La plus populaire pour les familles', 25.00, 'https://images.unsplash.com/photo-1621213327685-611ff69e8ee4?w=500&q=80', 'bottle');
-  insertProduct.run('Bouteille Gaz 20kg', 'Pour la restauration et grands consommateurs', 40.00, 'https://images.unsplash.com/photo-1621213327685-611ff69e8ee4?w=500&q=80', 'bottle');
-  insertProduct.run('Kit Complet Brûleur', 'Brûleur + Tuyau + Détendeur', 10.00, 'https://images.unsplash.com/photo-1590779033100-9f60a05a013d?w=500&q=80', 'accessories');
+  for (const p of products) {
+    insertProduct.run(p.name, p.description, p.price, p.image, p.category);
+  }
+} else {
+  // Mise à jour des images locales pour les produits existants
+  const updateImage = db.prepare('UPDATE products SET image = ?, description = ? WHERE name = ?');
+  for (const p of products) {
+    updateImage.run(p.image, p.description, p.name);
+  }
 }
 
 export default db;
+
