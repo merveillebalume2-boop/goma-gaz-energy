@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMap, Circle } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { motion } from 'framer-motion';
@@ -16,8 +16,40 @@ const defaultIcon = L.icon({
 // Composant pour déplacer la vue de la carte
 function ChangeView({ center }: { center: [number, number] }) {
   const map = useMap();
-  map.setView(center, 14);
+  map.setView(center, 15);
   return null;
+}
+
+// Composant pour afficher la géolocalisation de l'utilisateur
+function UserLocationMarker() {
+    const [position, setPosition] = useState<[number, number] | null>(null);
+    const map = useMap();
+  
+    useEffect(() => {
+      map.locate().on("locationfound", function (e) {
+        setPosition([e.latlng.lat, e.latlng.lng]);
+        // On ne recentre pas sur l'utilisateur pour garder le focus sur la commande
+      });
+    }, [map]);
+  
+    return position === null ? null : (
+      <>
+        <Circle 
+            center={position} 
+            radius={100} 
+            pathOptions={{ fillColor: '#3b82f6', color: '#3b82f6', fillOpacity: 0.2, weight: 1 }} 
+        />
+        <Marker 
+            position={position} 
+            icon={L.divIcon({
+                className: 'user-location-marker',
+                html: '<div style="background-color: #3b82f6; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px #3b82f6;"></div>',
+                iconSize: [12, 12],
+                iconAnchor: [6, 6]
+            })} 
+        />
+      </>
+    );
 }
 
 interface Order {
@@ -111,24 +143,26 @@ export default function Orders() {
           <div className="w-full h-full rounded-[2.5rem] overflow-hidden bg-[#0d1b2a] relative">
             <MapContainer
               center={[selectedOrder.lat, selectedOrder.lng]}
-              zoom={14}
+              zoom={15}
               scrollWheelZoom={true}
+              attributionControl={false}
               className="w-full h-full z-0"
               style={{ background: '#0d1b2a' }}
             >
               <ChangeView center={[selectedOrder.lat, selectedOrder.lng]} />
               
-              {/* Utilisation des tuiles CartoDB Dark (beau look pour le mode sombre) */}
               <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
                 url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
               />
 
+              {/* Position du client / Gaz */}
               <Marker position={[selectedOrder.lat, selectedOrder.lng]} icon={defaultIcon} />
+              
+              {/* Votre position actuelle */}
+              <UserLocationMarker />
               
             </MapContainer>
             
-            {/* Overlay Info client */}
             <div className="absolute bottom-6 left-6 right-6 p-6 rounded-[2rem] glass border border-white/10 backdrop-blur-xl flex items-center justify-between z-[1000]">
               <div className="flex items-center gap-4">
                 <div className="h-14 w-14 rounded-[1.5rem] bg-orange-500/20 text-orange-500 flex items-center justify-center">
