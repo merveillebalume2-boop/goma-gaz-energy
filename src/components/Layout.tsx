@@ -41,11 +41,12 @@ export default function Layout({ children }: { children: ReactNode }) {
   ];
 
   const socialLinks = [
-    { icon: <FaFacebook size={20} />, color: 'hover:text-[#1877F2]', link: '#' },
-    { icon: <FaTwitter size={20} />, color: 'hover:text-[#1DA1F2]', link: '#' },
-    { icon: <FaWhatsapp size={20} />, color: 'hover:text-[#25D366]', link: '#' },
-    { icon: <FaInstagram size={20} />, color: 'hover:text-[#E4405F]', link: '#' },
+    { icon: <FaFacebook size={20} />, color: 'hover:text-[#1877F2]', link: 'https://www.facebook.com/profile.php?id=100093080918855' },
+    { icon: <FaTwitter size={20} />, color: 'hover:text-[#0077B5]', link: 'https://www.linkedin.com/in/merveille-balume-813817375/' }, // Remplacé par LinkedIn
+    { icon: <FaWhatsapp size={20} />, color: 'hover:text-[#25D366]', link: 'https://wa.me/243978579134' },
+    { icon: <FaInstagram size={20} />, color: 'hover:text-[#333]', link: 'https://github.com/merveillebalume2-boop' }, // Remplacé par GitHub
   ];
+
 
   return (
     <div className={`min-h-screen flex flex-col transition-colors duration-500 ${isLight ? 'bg-slate-50 text-slate-900' : 'bg-slate-950 text-white'}`}>
