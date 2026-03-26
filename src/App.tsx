@@ -7,26 +7,28 @@ import Dashboard from './pages/Dashboard';
 import Vision2030 from './pages/Vision2030';
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { LanguageProvider } from './context/LanguageContext';
 
 function App() {
   return (
     <ThemeProvider>
-      <Router>
-        <CartProvider>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="/orders" element={<Orders />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/vision-2030" element={<Vision2030 />} />
-            </Routes>
-          </Layout>
-        </CartProvider>
-      </Router>
+      <LanguageProvider>
+        <Router>
+          <CartProvider>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route path="/orders" element={<Orders />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/vision-2030" element={<Vision2030 />} />
+              </Routes>
+            </Layout>
+          </CartProvider>
+        </Router>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }
 
 export default App;
-

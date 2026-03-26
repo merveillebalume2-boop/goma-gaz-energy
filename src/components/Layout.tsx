@@ -1,205 +1,174 @@
-import { type ReactNode, useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  HiHome,
-  HiShoppingBag,
-  HiMap,
-  HiChartBar,
-  HiLightBulb,
+import { ReactNode, useState } from 'react';
+import { NavLink, Link } from 'react-router-dom';
+import { 
+  HiHome, 
+  HiShoppingCart, 
+  HiTruck, 
+  HiDatabase, 
+  HiFire, 
+  HiMoon, 
+  HiSun,
   HiMenu,
   HiX,
-  HiSun,
-  HiMoon,
-  HiShoppingCart,
-  HiFire,
+  HiLightningBolt
 } from 'react-icons/hi';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
-
-const navItems = [
-  { path: '/', name: 'Accueil', icon: HiHome },
-  { path: '/shop', name: 'Boutique', icon: HiShoppingBag },
-  { path: '/orders', name: 'Suivi', icon: HiMap },
-  { path: '/dashboard', name: 'Tableau de bord', icon: HiChartBar },
-  { path: '/vision-2030', name: 'Vision 2030', icon: HiLightBulb },
-];
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Layout({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { cartCount } = useCart();
   const { theme, toggleTheme } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
 
   const isLight = theme === 'light';
 
-  return (
-    <div
-      className="min-h-screen flex flex-col"
-      style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}
-    >
-      {/* Top Bar */}
-      <header
-        className="fixed top-0 w-full z-50 glass"
-        style={{ borderBottom: '1px solid var(--border-color)' }}
-      >
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          {/* Logo */}
-          <NavLink to="/" className="flex items-center gap-2 text-orange-500 font-black text-xl tracking-tight">
-            <HiFire size={28} className="text-orange-500" />
-            <span>GOMA GAZ</span>
-          </NavLink>
+  const navItems = [
+    { name: t('nav_home'), path: '/', icon: HiHome },
+    { name: t('nav_vision'), path: '/vision-2030', icon: HiLightningBolt },
+    { name: t('nav_shop'), path: '/shop', icon: HiShoppingCart },
+    { name: t('nav_orders'), path: '/orders', icon: HiTruck },
+    { name: t('nav_dashboard'), path: '/dashboard', icon: HiDatabase },
+  ];
 
-          {/* Actions droite */}
-          <div className="flex items-center gap-3">
-            {/* Panier */}
-            {cartCount > 0 && (
+  return (
+    <div className={`min-h-screen flex flex-col transition-colors duration-500 ${isLight ? 'bg-slate-50 text-slate-900' : 'bg-slate-950 text-white'}`}>
+      {/* Header Fini/Premium */}
+      <header className={`fixed top-0 left-0 right-0 z-[1000] border-b backdrop-blur-md transition-all h-20 flex items-center ${isLight ? 'bg-white/80 border-slate-200' : 'bg-slate-950/80 border-white/5'}`}>
+        <div className="max-w-7xl mx-auto px-6 w-full flex items-center justify-between">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="h-10 w-10 bg-orange-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-500/20 group-hover:rotate-12 transition-transform">
+              <HiFire size={24} />
+            </div>
+            <span className="text-xl font-black tracking-tighter uppercase">Goma<span className="text-orange-500">Gaz</span></span>
+          </Link>
+
+          {/* Navigation Desktop */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {navItems.map((item) => (
               <NavLink
-                to="/shop"
-                className="relative p-2 rounded-full"
-                style={{ background: 'var(--bg-card)' }}
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) => 
+                  `px-5 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${
+                    isActive 
+                      ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20' 
+                      : isLight ? 'text-slate-600 hover:bg-slate-100' : 'text-slate-400 hover:bg-white/5'
+                  }`
+                }
               >
-                <HiShoppingCart size={22} className="text-orange-500" />
-                <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] font-black min-w-5 h-5 flex items-center justify-center rounded-full">
+                <item.icon size={18} />
+                {item.name}
+              </NavLink>
+            ))}
+          </nav>
+
+          {/* Actions Droite */}
+          <div className="flex items-center gap-3">
+             {/* Language Switcher */}
+             <div className="hidden md:flex bg-slate-100 dark:bg-white/5 p-1 rounded-xl border border-slate-200 dark:border-white/10">
+              {(['fr', 'en', 'sw'] as const).map((lang) => (
+                <button
+                  key={lang}
+                  onClick={() => setLanguage(lang)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all ${
+                    language === lang 
+                      ? 'bg-white dark:bg-orange-500 text-orange-500 dark:text-white shadow-sm' 
+                      : 'text-slate-500 hover:text-orange-500'
+                  }`}
+                >
+                  {lang}
+                </button>
+              ))}
+            </div>
+
+            {/* Cart & Theme */}
+            <Link to="/shop" className="relative h-11 w-11 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center hover:scale-110 active:scale-95 transition-all text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/10">
+              <HiShoppingCart size={22} />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 bg-orange-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white dark:border-slate-950 animate-bounce">
                   {cartCount}
                 </span>
-              </NavLink>
-            )}
+              )}
+            </Link>
 
-            {/* Toggle Thème */}
             <button
               onClick={toggleTheme}
-              id="theme-toggle"
-              title={isLight ? 'Passer en mode sombre' : 'Passer en mode clair'}
-              className="p-2 rounded-full transition-all active:scale-90 hover:opacity-80"
-              style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
+              className="h-11 w-11 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center hover:scale-110 active:scale-95 transition-all text-slate-600 dark:text-orange-400 border border-slate-200 dark:border-white/10"
             >
-              {isLight ? (
-                <HiMoon size={20} className="text-slate-700" />
-              ) : (
-                <HiSun size={20} className="text-yellow-400" />
-              )}
+              {theme === 'dark' ? <HiSun size={22} /> : <HiMoon size={22} /> }
             </button>
 
-            {/* Bouton Menu Hamburger */}
-            <button
-              id="menu-toggle"
-              onClick={() => setMenuOpen(true)}
-              className="p-2 rounded-full bg-orange-500 text-white fab-pulse transition-all active:scale-90 shadow-lg shadow-orange-500/30"
+            {/* Mobile Menu Toggle */}
+            <button 
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="lg:hidden h-11 w-11 rounded-2xl bg-orange-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/30"
             >
-              <HiMenu size={22} />
+              {menuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Overlay Menu complet */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100]"
-            style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }}
-            onClick={() => setMenuOpen(false)}
-          >
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="absolute right-0 top-0 h-full w-72 flex flex-col p-8 shadow-2xl"
-              style={{ backgroundColor: 'var(--bg-secondary)', borderLeft: '1px solid var(--border-color)' }}
-              onClick={e => e.stopPropagation()}
-            >
-              {/* Header du menu */}
-              <div className="flex items-center justify-between mb-10">
-                <div className="flex items-center gap-2 text-orange-500 font-black text-xl">
-                  <HiFire size={28} />
-                  <span>GOMA GAZ</span>
-                </div>
-                <button
-                  onClick={() => setMenuOpen(false)}
-                  className="p-2 rounded-full transition-all active:scale-90"
-                  style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
-                >
-                  <HiX size={20} style={{ color: 'var(--text-primary)' }} />
-                </button>
-              </div>
-
-              {/* Navigation */}
-              <nav className="flex flex-col gap-2 flex-1">
-                {navItems.map((item, i) => (
-                  <motion.div
-                    key={item.path}
-                    initial={{ opacity: 0, x: 30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.06 }}
-                  >
-                    <NavLink
-                      to={item.path}
-                      onClick={() => setMenuOpen(false)}
-                      className={({ isActive }) =>
-                        `flex items-center gap-4 p-4 rounded-2xl font-bold text-base transition-all ${
-                          isActive
-                            ? 'bg-orange-500/10 text-orange-500'
-                            : 'hover:bg-orange-500/5'
-                        }`
-                      }
-                      style={({ isActive }) => ({
-                        color: isActive ? '#f97316' : 'var(--text-primary)',
-                      })}
-                    >
-                      <item.icon size={22} />
-                      {item.name}
-                      {item.path === '/shop' && cartCount > 0 && (
-                        <span className="ml-auto bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">
-                          {cartCount}
-                        </span>
-                      )}
-                    </NavLink>
-                  </motion.div>
-                ))}
-              </nav>
-
-              {/* Toggle thème dans le menu */}
-              <div
-                className="mt-auto pt-6 rounded-2xl p-4 flex items-center justify-between"
-                style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)' }}
+      {/* Mobile Menu Panel */}
+      <div className={`fixed inset-0 z-[900] bg-slate-950/20 backdrop-blur-sm lg:hidden transition-opacity duration-300 ${menuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setMenuOpen(false)} />
+      <div className={`fixed top-0 bottom-0 right-0 w-80 z-[950] bg-white dark:bg-slate-950 shadow-2xl lg:hidden transition-transform duration-500 ease-out transform ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className="p-8 pt-24 space-y-6">
+          <div className="flex bg-slate-100 dark:bg-white/5 p-1 rounded-xl w-full mb-8">
+            {(['fr', 'en', 'sw'] as const).map((lang) => (
+              <button
+                key={lang}
+                onClick={() => { setLanguage(lang); setMenuOpen(false); }}
+                className={`flex-1 py-3 rounded-lg text-sm font-bold uppercase transition-all ${
+                  language === lang 
+                    ? 'bg-white dark:bg-orange-500 text-orange-500 dark:text-white shadow-sm' 
+                    : 'text-slate-500'
+                }`}
               >
-                <span className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
-                  {isLight ? 'Mode Clair' : 'Mode Sombre'}
-                </span>
-                <button
-                  onClick={toggleTheme}
-                  className="relative w-12 h-6 rounded-full transition-all duration-300"
-                  style={{ backgroundColor: isLight ? '#f97316' : '#334155' }}
-                >
-                  <motion.div
-                    animate={{ x: isLight ? 24 : 2 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                    className="absolute top-1 w-4 h-4 bg-white rounded-full shadow flex items-center justify-center"
-                  >
-                    {isLight ? <HiSun size={10} className="text-orange-500" /> : <HiMoon size={10} className="text-slate-400" />}
-                  </motion.div>
-                </button>
-              </div>
+                {lang === 'sw' ? 'Swahili' : lang === 'fr' ? 'Français' : 'English'}
+              </button>
+            ))}
+          </div>
 
-              <p className="text-center text-xs mt-4" style={{ color: 'var(--text-secondary)' }}>
-                © 2026 Goma Gaz Energy
-              </p>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Contenu principal */}
-      <main className="flex-1 pt-16 min-h-screen">
-        <div className="max-w-7xl mx-auto p-4 lg:p-12">
-          {children}
+          <nav className="space-y-2">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                onClick={() => setMenuOpen(false)}
+                className={({ isActive }) => 
+                  `flex items-center gap-4 p-4 rounded-2xl font-bold transition-all ${
+                    isActive 
+                      ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20' 
+                      : isLight ? 'text-slate-600 hover:bg-slate-100' : 'text-slate-400 hover:bg-white/5'
+                  }`
+                }
+              >
+                <item.icon size={24} />
+                <span className="text-lg">{item.name}</span>
+              </NavLink>
+            ))}
+          </nav>
         </div>
+      </div>
+
+      {/* Main Content */}
+      <main className="flex-1 pt-20 px-6 max-w-7xl mx-auto w-full">
+        {children}
       </main>
+
+      {/* Footer Minimal */}
+      <footer className={`py-12 border-t mt-12 ${isLight ? 'border-slate-200 bg-white/50' : 'border-white/5 bg-slate-950/20'}`}>
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <div className="flex items-center justify-center gap-2 mb-4 opacity-50">
+            <HiFire size={20} className="text-orange-500" />
+            <span className="font-black text-sm tracking-tighter uppercase">GomaGaz</span>
+          </div>
+          <p className="text-slate-500 text-xs font-medium">&copy; {new Date().getFullYear()} Goma Energy Solution. North-Kivu, DRC.</p>
+        </div>
+      </footer>
     </div>
   );
 }

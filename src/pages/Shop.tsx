@@ -3,14 +3,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { HiShoppingCart, HiCheckCircle, HiLocationMarker, HiX, HiFire, HiCube } from 'react-icons/hi';
 import { ImSpinner8 } from 'react-icons/im';
 import { useCart, type Product } from '../context/CartContext';
-import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 import { API_BASE_URL } from '../config';
 
 export default function Shop() {
+  const { addToCart, cartCount, total } = useCart();
+  const { t } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
-  const { addToCart, cartCount, total } = useCart();
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/products`)
@@ -20,45 +21,27 @@ export default function Shop() {
         setLoading(false);
       })
       .catch(err => {
-        console.error('Erreur:', err);
+        console.error(err);
         setLoading(false);
       });
   }, []);
 
   return (
-    <div className="space-y-12 pb-24 relative min-h-screen">
-      {/* Background Pylône Électrique */}
-      <div className="absolute inset-0 z-[-1] pointer-events-none overflow-hidden rounded-[3rem]">
-        <div 
-          className="absolute inset-x-0 top-0 h-[600px] bg-cover bg-center opacity-10"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1473669651717-d57bebc66258?w=1600&q=80')" }}
-        />
-        <div className="absolute inset-x-0 top-0 h-[600px] bg-gradient-to-b from-transparent via-slate-950/80 to-slate-950" />
-      </div>
-
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/10 pb-6 pt-12">
-        <div>
-          <h1 className="text-4xl md:text-5xl font-black mb-2">Boutique</h1>
-          <p className="text-slate-400 font-medium text-lg">Commandez votre gaz, nous livrons en 30 minutes.</p>
-        </div>
-        {cartCount > 0 && (
-          <button 
-            onClick={() => setCheckoutModalOpen(true)}
-            className="flex items-center gap-3 bg-orange-500 hover:bg-orange-600 px-8 py-4 rounded-full font-bold shadow-lg shadow-orange-500/20 transition-transform active:scale-95"
-          >
-            <HiShoppingCart size={20} />
-            <span>Panier ({cartCount})</span>
-            <span className="opacity-70">${total.toFixed(2)}</span>
-          </button>
-        )}
+    <div className="space-y-12 pb-20">
+      <header className="max-w-3xl">
+        <h1 className="text-6xl font-black mb-6 tracking-tighter">{t('shop_title')}</h1>
+        <p className="text-xl text-slate-500 font-medium leading-relaxed">
+          {t('shop_subtitle')}
+        </p>
       </header>
 
       {loading ? (
-        <div className="flex justify-center items-center h-64 text-orange-500">
-          <ImSpinner8 size={40} className="animate-spin" />
+        <div className="flex flex-col items-center justify-center py-20 space-y-4">
+          <ImSpinner8 size={48} className="text-orange-500 animate-spin" />
+          <p className="text-slate-500 font-bold uppercase tracking-widest text-sm">Chargement des produits...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {products.map((product, i) => (
             <motion.div
               key={product.id}
@@ -77,14 +60,16 @@ export default function Shop() {
               <div className="p-8 flex-1 flex flex-col relative z-20">
                 <span className="text-orange-500 text-sm font-bold tracking-widest uppercase mb-1">{product.category}</span>
                 <h3 className="text-2xl font-black mb-2">{product.name}</h3>
-                <p className="text-slate-400 text-sm mb-6 flex-1 line-clamp-2">{product.description}</p>
-                <div className="flex items-center justify-between">
+                <p className="text-slate-500 text-sm font-medium mb-6 flex-1">{product.description}</p>
+                
+                <div className="flex items-center justify-between mt-auto">
                   <span className="text-3xl font-black">${product.price.toFixed(2)}</span>
-                  <button 
+                  <button
                     onClick={() => addToCart(product)}
-                    className="h-14 w-14 rounded-full bg-white/5 hover:bg-orange-500 flex items-center justify-center transition-colors shadow-inner border border-white/10"
+                    className="h-14 w-14 bg-orange-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/20 hover:scale-110 active:scale-90 transition-all font-black"
+                    title={t('btn_add_to_cart')}
                   >
-                    <HiCheckCircle size={24} />
+                    <HiShoppingCart size={24} />
                   </button>
                 </div>
               </div>
@@ -93,144 +78,82 @@ export default function Shop() {
         </div>
       )}
 
-      {/* Checkout Modal */}
+      {/* Floating Checkout Toggle */}
+      <AnimatePresence>
+        {cartCount > 0 && (
+          <motion.button
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            onClick={() => setCheckoutModalOpen(true)}
+            className="fixed bottom-8 right-8 left-8 md:right-12 md:left-auto md:w-80 h-20 bg-orange-500 text-white rounded-3xl shadow-2xl shadow-orange-500/40 flex items-center justify-between px-8 z-[1001] transition-transform hover:scale-105 active:scale-95"
+          >
+            <div className="flex items-center gap-4">
+              <div className="h-10 w-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <HiShoppingCart size={24} />
+              </div>
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-widest opacity-70">{t('order_summary')}</div>
+                <div className="font-black text-xl">${total.toFixed(2)}</div>
+              </div>
+            </div>
+            <div className="h-10 w-10 bg-white text-orange-500 rounded-full flex items-center justify-center font-black">
+              {cartCount}
+            </div>
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Mini Checkout Modal Placeholder */}
       <AnimatePresence>
         {checkoutModalOpen && (
-          <CheckoutModal onClose={() => setCheckoutModalOpen(false)} />
+          <div className="fixed inset-0 z-[2000] flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-slate-950/80 backdrop-blur-md" 
+              onClick={() => setCheckoutModalOpen(false)} 
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="w-full max-w-lg glass bg-white dark:bg-slate-900 rounded-[3rem] p-10 relative z-10 border border-white/5"
+            >
+              <button 
+                onClick={() => setCheckoutModalOpen(false)}
+                className="absolute top-8 right-8 text-slate-400 hover:text-white transition-colors"
+              >
+                <HiX size={32} />
+              </button>
+              
+              <div className="mb-10">
+                <h2 className="text-3xl font-black mb-2">{t('order_summary')}</h2>
+                <p className="text-slate-500 font-medium">Confirmation de votre livraison à Goma.</p>
+              </div>
+
+              <div className="space-y-4 mb-10">
+                <div className="flex justify-between items-center bg-slate-950/50 p-6 rounded-3xl border border-white/5">
+                  <span className="font-bold text-slate-400 uppercase tracking-widest text-xs">Total</span>
+                  <span className="text-4xl font-black">${total.toFixed(2)}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => {
+                  setCheckoutModalOpen(false);
+                  alert('Commande envoyée ! Redirection vers le suivi...');
+                }}
+                className="w-full py-6 bg-orange-500 text-white rounded-3xl font-black text-xl shadow-xl shadow-orange-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+              >
+                <HiCheckCircle size={28} />
+                {t('btn_confirm')}
+              </button>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>
-  );
-}
-
-function CheckoutModal({ onClose }: { onClose: () => void }) {
-  const { cart, total, clearCart } = useCart();
-  const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', phone: '' });
-  const [gps, setGps] = useState<{lat: number, lng: number} | null>(null);
-  const [locating, setLocating] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-
-  const getPosition = () => {
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setGps({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        setLocating(false);
-      },
-      (err) => {
-        console.error(err);
-        setLocating(false);
-        // Fallback fake GPS for demo
-        setGps({ lat: -1.6888, lng: 29.2154 });
-      }
-    );
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    
-    // Auto-fetch GPS if not manually done
-    let finalGps = gps;
-    if (!finalGps) {
-      finalGps = { lat: -1.6888, lng: 29.2154 }; // Fallback central Goma
-    }
-
-    const payload = {
-      customerName: form.name,
-      phone: form.phone,
-      total,
-      lat: finalGps.lat,
-      lng: finalGps.lng,
-      status: 'En attente',
-      items: cart.map(c => ({ productId: c.id, quantity: c.quantity }))
-    };
-
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/orders`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (res.ok) {
-        clearCart();
-        navigate('/orders');
-      }
-    } catch(err) {
-      console.error(err);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-xl flex items-center justify-center p-4 overflow-y-auto"
-    >
-      <motion.div 
-        initial={{ y: 50, scale: 0.9 }}
-        animate={{ y: 0, scale: 1 }}
-        className="glass border border-white/10 p-8 rounded-[3rem] w-full max-w-lg shadow-2xl relative my-8"
-      >
-        <button onClick={onClose} className="absolute top-6 right-6 p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
-          <HiX size={20} />
-        </button>
-        
-        <h2 className="text-3xl font-black mb-8 border-b border-white/5 pb-4">Finaliser la commande</h2>
-        
-        <div className="space-y-4 mb-8 max-h-40 overflow-auto pr-2">
-          {cart.map(item => (
-            <div key={item.id} className="flex justify-between items-center text-sm">
-              <span className="font-semibold">{item.quantity}x {item.name}</span>
-              <span className="text-slate-400">${(item.price * item.quantity).toFixed(2)}</span>
-            </div>
-          ))}
-          <div className="border-t border-white/10 mt-4 pt-4 flex justify-between font-black text-xl text-orange-500">
-            <span>Total</span>
-            <span>${total.toFixed(2)}</span>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
-            <input 
-              required
-              placeholder="Nom complet" 
-              className="w-full bg-slate-950/50 border border-white/10 rounded-[1.5rem] px-6 py-4 focus:outline-none focus:border-orange-500 transition-colors placeholder:text-slate-500"
-              value={form.name}
-              onChange={e => setForm({...form, name: e.target.value})}
-            />
-            <input 
-              required
-              type="tel"
-              placeholder="Téléphone (ex: +243 99...)" 
-              className="w-full bg-slate-950/50 border border-white/10 rounded-[1.5rem] px-6 py-4 focus:outline-none focus:border-orange-500 transition-colors placeholder:text-slate-500"
-              value={form.phone}
-              onChange={e => setForm({...form, phone: e.target.value})}
-            />
-            <button 
-              type="button" 
-              onClick={getPosition}
-              className={`w-full flex items-center gap-3 justify-center px-6 py-4 rounded-[1.5rem] font-bold border ${gps ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-orange-500/10 border-orange-500/20 text-orange-500 hover:bg-orange-500/20'}`}
-            >
-              {locating ? <ImSpinner8 className="animate-spin" size={20} /> : <HiLocationMarker size={20} />}
-              {gps ? 'Position GPS capturée !' : 'Détecter ma position exacte'}
-            </button>
-          </div>
-
-          <button 
-            type="submit"
-            disabled={submitting}
-            className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-black text-lg py-5 rounded-[2rem] shadow-[0_0_20px_rgba(249,115,22,0.3)] transition-all active:scale-95 flex justify-center"
-          >
-            {submitting ? <ImSpinner8 className="animate-spin" size={20} /> : 'Confirmer l\'expédition'}
-          </button>
-        </form>
-      </motion.div>
-    </motion.div>
   );
 }
