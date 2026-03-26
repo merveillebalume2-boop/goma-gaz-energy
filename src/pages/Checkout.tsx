@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiCheckCircle, HiArrowLeft, HiArchive, HiLightningBolt, HiArrowSmUp } from 'react-icons/hi';
+import { HiArrowLeft, HiArchive, HiArrowSmUp } from 'react-icons/hi';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -26,7 +26,7 @@ export default function Checkout() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto py-12 px-6 space-y-12 pb-32">
+    <div className="max-w-6xl mx-auto py-12 px-6 space-y-12 pb-32 font-sans">
       {/* Header avec bouton Retour */}
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
         <div>
@@ -45,20 +45,20 @@ export default function Checkout() {
         </div>
       </header>
 
-      {/* SECTION DES DEUX CARTES D'ÉVOLUTION STATISTIQUE (ICÔNES SUPPRIMÉES) */}
+      {/* SECTION DES DEUX CARTES D'ÉVOLUTION STATISTIQUE (TOUTES ICÔNES SUPPRIMÉES) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* CARTE 1 : ÉVOLUTION DES VENTES (INTERACTIVE) */}
+        {/* CARTE 1 : ÉVOLUTION DES VENTES (CHARTS) */}
         <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="glass p-12 rounded-[4rem] border border-white/5 shadow-2xl relative overflow-hidden group"
         >
             <div className="flex items-center justify-between mb-12">
-                <h3 className="text-2xl font-black uppercase tracking-widest text-orange-500">Ventes Annuel</h3>
+                <h3 className="text-2xl font-black uppercase tracking-widest text-orange-500">Ventes Annuelle</h3>
                 <span className="text-green-500 font-black text-sm">+18% Evolution</span>
             </div>
             
-            {/* Visualisation Statistique (Interactive avec Flèche) */}
+            {/* Visualisation Statistique */}
             <div className="h-56 flex items-end gap-3 px-2 relative">
                 {[40, 60, 45, 90, 65, 80, 100].map((h, i) => (
                     <div key={i} className="flex-1 flex flex-col items-center justify-end h-full relative group/bar cursor-pointer" onClick={() => setActiveBar(activeBar === i ? null : i)}>
@@ -91,7 +91,7 @@ export default function Checkout() {
             </div>
         </motion.div>
 
-        {/* CARTE 2 : ÉVOLUTION DES STOCKS (ICÔNES SUPPRIMÉES) */}
+        {/* CARTE 2 : ÉVOLUTION DES STOCKS (GAUGE) */}
         <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -137,19 +137,16 @@ export default function Checkout() {
         </motion.div>
       </div>
 
-      {/* Résumé Final et Bouton de Validation */}
+      {/* Résumé Final SANS AUCUNE ICÔNE */}
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        className="glass p-14 rounded-[4.5rem] border border-white/10 shadow-3xl text-center space-y-12"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        className="glass p-16 rounded-[4.5rem] border border-white/10 shadow-3xl text-center space-y-10"
       >
         <div className="space-y-6">
-            <div className="h-16 w-16 bg-orange-500/10 text-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                 <HiCheckCircle size={40} />
-            </div>
             <h2 className="text-4xl font-black uppercase tracking-tighter">{t('checkout_desc')}</h2>
             <p className="text-slate-500 font-black max-w-xl mx-auto leading-relaxed text-lg">
-               La logistique de Goma Gaz est en mouvement. Confirmez pour lancer votre livraison à domicile. 🚀⚡
+               La logistique de Goma Gaz est en mouvement. Confirmez pour lancer votre livraison à domicile.
             </p>
         </div>
 
@@ -159,10 +156,9 @@ export default function Checkout() {
                clearCart();
                navigate('/orders');
             }}
-            className="w-full max-w-lg mx-auto py-8 bg-orange-500 text-white rounded-[2.5rem] font-black text-2xl shadow-2xl shadow-orange-500/50 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-6 group border-b-8 border-orange-700/50"
+            className="w-full max-w-lg mx-auto py-8 bg-orange-500 text-white rounded-[2.5rem] font-black text-3xl shadow-2xl shadow-orange-500/50 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-6 border-b-8 border-orange-700/50 uppercase tracking-widest"
         >
             {t('btn_confirm')}
-            <HiLightningBolt size={32} className="text-yellow-300 animate-pulse" />
         </button>
       </motion.div>
     </div>
