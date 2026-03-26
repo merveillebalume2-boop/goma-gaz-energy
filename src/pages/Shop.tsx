@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiShoppingCart, HiCheckCircle, HiX, HiFire, HiCube, HiChartBar, HiUsers } from 'react-icons/hi';
+import { HiShoppingCart, HiCheckCircle, HiX, HiFire, HiCube, HiChartBar, HiUsers, HiCash } from 'react-icons/hi';
 import { ImSpinner8 } from 'react-icons/im';
 import { useCart, type Product } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -9,7 +9,7 @@ import { API_BASE_URL } from '../config';
 export default function Shop() {
   const { addToCart, cartCount, total } = useCart();
   const { t } = useLanguage();
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<(Product & { stock?: number })[]>([]);
   const [loading, setLoading] = useState(true);
   const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
 
@@ -17,7 +17,12 @@ export default function Shop() {
     fetch(`${API_BASE_URL}/api/products`)
       .then(res => res.json())
       .then(data => {
-        setProducts(data);
+        // Simuler des stocks pour la démonstration
+        const productsWithStock = data.map((p: any) => ({
+            ...p,
+            stock: Math.floor(Math.random() * 20) + 5 // Stock entre 5 et 25
+        }));
+        setProducts(productsWithStock);
         setLoading(false);
       })
       .catch(err => {
@@ -28,21 +33,21 @@ export default function Shop() {
 
   return (
     <div className="space-y-12 pb-20 overflow-hidden">
-      {/* Header et Stats d'Évolution */}
-      <div className="flex flex-col lg:flex-row gap-8 items-start lg:items-center justify-between px-6">
-        <header className="max-w-2xl">
+      {/* Header et Stats de Ventes / Évolution */}
+      <div className="flex flex-col xl:flex-row gap-8 items-start xl:items-center justify-between px-6">
+        <header className="max-w-xl">
             <h1 className="text-6xl font-black mb-4 tracking-tighter">{t('shop_title')}</h1>
             <p className="text-xl text-slate-500 font-bold leading-relaxed">
             {t('shop_subtitle')}
             </p>
         </header>
 
-        {/* LES DEUX CARTES D'ÉVOLUTION RE-AJOUTÉES */}
-        <div className="flex flex-wrap gap-4">
+        {/* CARTES DE STATISTIQUES (VENTES ET ÉVOLUTION) */}
+        <div className="flex flex-wrap gap-4 w-full xl:w-auto">
             <motion.div 
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="glass p-6 rounded-[2.5rem] border border-white/5 flex items-center gap-6 min-w-[240px] shadow-xl"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="glass p-6 rounded-[2.5rem] border border-white/5 flex items-center gap-6 flex-1 xl:min-w-[240px] shadow-xl"
             >
                 <div className="h-14 w-14 bg-orange-500/20 text-orange-500 rounded-2xl flex items-center justify-center">
                     <HiChartBar size={28} />
@@ -54,10 +59,25 @@ export default function Shop() {
             </motion.div>
 
             <motion.div 
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="glass p-6 rounded-[2.5rem] border border-white/5 flex items-center gap-6 min-w-[240px] shadow-xl"
+                className="glass p-6 rounded-[2.5rem] border border-white/5 flex items-center gap-6 flex-1 xl:min-w-[240px] shadow-xl"
+            >
+                <div className="h-14 w-14 bg-green-500/20 text-green-500 rounded-2xl flex items-center justify-center">
+                    <HiCash size={28} />
+                </div>
+                <div>
+                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Ventes Totales</div>
+                    <div className="text-2xl font-black">$42.5k</div>
+                </div>
+            </motion.div>
+
+            <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="glass p-6 rounded-[2.5rem] border border-white/5 flex items-center gap-6 flex-1 xl:min-w-[240px] shadow-xl"
             >
                 <div className="h-14 w-14 bg-blue-500/20 text-blue-500 rounded-2xl flex items-center justify-center">
                     <HiUsers size={28} />
@@ -76,7 +96,7 @@ export default function Shop() {
           <p className="text-slate-500 font-black uppercase tracking-widest text-xs">{t('shop_loading')}</p>
         </div>
       ) : (
-        /* INFINITE CAROUSEL FOR PRODUCTS */
+        /* INFINITE CAROUSEL FOR PRODUCTS WITH STOCK INFO */
         <section className="relative w-full">
             <div className="max-w-full overflow-hidden">
                 <motion.div 
@@ -91,6 +111,17 @@ export default function Shop() {
                             whileHover={{ scale: 1.02 }}
                             className="glass rounded-[3.5rem] overflow-hidden flex flex-col group relative border border-white/5 w-[350px] shrink-0"
                         >
+                            {/* Stock Badge */}
+                            <div className="absolute top-6 right-6 z-30">
+                                <div className={`px-4 py-2 rounded-full font-black text-[10px] uppercase shadow-lg ${
+                                    (product.stock || 0) < 10 
+                                    ? 'bg-orange-500 text-white animate-pulse' 
+                                    : 'bg-green-500/80 text-white backdrop-blur-sm'
+                                }`}>
+                                    Stock: {product.stock}
+                                </div>
+                            </div>
+
                             <div className="h-48 flex items-center justify-center bg-slate-950/50 border-b border-white/5 group-hover:bg-slate-900 transition-colors">
                                 {product.category === 'bottle' ? (
                                 <HiFire size={80} className="text-orange-500 group-hover:scale-110 transition-transform duration-700 opacity-80" />
