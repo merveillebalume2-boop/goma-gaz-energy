@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiShoppingCart, HiCheckCircle, HiLocationMarker, HiX, HiFire, HiCube } from 'react-icons/hi';
+import { HiShoppingCart, HiCheckCircle, HiX, HiFire, HiCube } from 'react-icons/hi';
 import { ImSpinner8 } from 'react-icons/im';
 import { useCart, type Product } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -27,8 +27,8 @@ export default function Shop() {
   }, []);
 
   return (
-    <div className="space-y-12 pb-20">
-      <header className="max-w-3xl">
+    <div className="space-y-12 pb-20 overflow-hidden">
+      <header className="max-w-3xl px-6">
         <h1 className="text-6xl font-black mb-6 tracking-tighter">{t('shop_title')}</h1>
         <p className="text-xl text-slate-500 font-bold leading-relaxed">
           {t('shop_subtitle')}
@@ -36,45 +36,61 @@ export default function Shop() {
       </header>
 
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 space-y-4">
+        <div className="flex flex-col items-center justify-center py-20 space-y-4 px-6">
           <ImSpinner8 size={48} className="text-orange-500 animate-spin" />
           <p className="text-slate-500 font-black uppercase tracking-widest text-xs">{t('shop_loading')}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {products.map((product, i) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.1 }}
-              className="glass rounded-[3rem] overflow-hidden flex flex-col group relative border border-white/5"
-            >
-              <div className="h-48 flex items-center justify-center bg-slate-950/50 border-b border-white/5 group-hover:bg-slate-900 transition-colors">
-                {product.category === 'bottle' ? (
-                  <HiFire size={80} className="text-orange-500 group-hover:scale-110 transition-transform duration-700 opacity-80" />
-                ) : (
-                  <HiCube size={80} className="text-blue-500 group-hover:scale-110 transition-transform duration-700 opacity-80" />
-                )}
-              </div>
-              <div className="p-8 flex-1 flex flex-col relative z-20">
-                <span className="text-orange-500 text-xs font-black tracking-[0.2em] uppercase mb-1">{product.category}</span>
-                <h3 className="text-2xl font-black mb-2 uppercase tracking-tight">{product.name}</h3>
-                <p className="text-slate-500 text-sm font-bold mb-6 flex-1 italic">{product.description}</p>
-                
-                <div className="flex items-center justify-between mt-auto">
-                  <span className="text-3xl font-black">${product.price.toFixed(2)}</span>
-                  <button
-                    onClick={() => addToCart(product)}
-                    className="h-14 w-14 bg-orange-500 text-white rounded-2xl flex items-center justify-center shadow-lg hover:scale-110 active:scale-90 transition-all font-black"
-                  >
-                    <HiShoppingCart size={24} />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+        /* INFINITE CAROUSEL FOR PRODUCTS */
+        <section className="relative w-full">
+            <div className="max-w-full overflow-hidden">
+                <motion.div 
+                    animate={{ x: ["0%", "-50%"] }}
+                    transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                    whileHover={{ animationPlayState: 'paused' }} // PAUSE ON HOVER!
+                    className="flex gap-8 w-max px-8"
+                >
+                    {/* On double la liste des produits pour l'effet infini */}
+                    {[...products, ...products].map((product, i) => (
+                        <motion.div
+                            key={`${product.id}-${i}`}
+                            whileHover={{ scale: 1.02 }}
+                            className="glass rounded-[3.5rem] overflow-hidden flex flex-col group relative border border-white/5 w-[350px] shrink-0"
+                        >
+                            <div className="h-48 flex items-center justify-center bg-slate-950/50 border-b border-white/5 group-hover:bg-slate-900 transition-colors">
+                                {product.category === 'bottle' ? (
+                                <HiFire size={80} className="text-orange-500 group-hover:scale-110 transition-transform duration-700 opacity-80" />
+                                ) : (
+                                <HiCube size={80} className="text-blue-500 group-hover:scale-110 transition-transform duration-700 opacity-80" />
+                                )}
+                            </div>
+                            <div className="p-8 flex-1 flex flex-col relative z-20">
+                                <span className="text-orange-500 text-xs font-black tracking-[0.2em] uppercase mb-1">{product.category}</span>
+                                <h3 className="text-2xl font-black mb-2 uppercase tracking-tight">{product.name}</h3>
+                                <p className="text-slate-500 text-sm font-bold mb-6 flex-1 italic">{product.description}</p>
+                                
+                                <div className="flex items-center justify-between mt-auto">
+                                <span className="text-3xl font-black">${product.price.toFixed(2)}</span>
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        addToCart(product);
+                                    }}
+                                    className="h-14 w-14 bg-orange-500 text-white rounded-2xl flex items-center justify-center shadow-lg hover:scale-110 active:scale-90 transition-all font-black"
+                                >
+                                    <HiShoppingCart size={24} />
+                                </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    ))}
+                </motion.div>
+            </div>
+            
+            {/* Guide visuel pour indiquer que ça bouge */}
+            <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none" />
+        </section>
       )}
 
       {/* Floating Checkout Toggle */}
