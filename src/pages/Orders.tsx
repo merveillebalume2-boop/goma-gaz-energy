@@ -1,8 +1,24 @@
 import { useEffect, useState } from 'react';
-import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { motion } from 'framer-motion';
 import { HiCube, HiTruck, HiCheckCircle, HiLocationMarker } from 'react-icons/hi';
 import { API_BASE_URL } from '../config';
+
+// Fix pour les icônes Leaflet par défaut
+const defaultIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+    iconSize: [38, 38],
+    iconAnchor: [19, 38],
+});
+
+// Composant pour déplacer la vue de la carte
+function ChangeView({ center }: { center: [number, number] }) {
+  const map = useMap();
+  map.setView(center, 14);
+  return null;
+}
 
 interface Order {
   id: number;
@@ -89,34 +105,31 @@ export default function Orders() {
         </div>
       </div>
 
-      {/* Carte Goma */}
+      {/* Carte Goma (Leaflet - GRATUIT) */}
       <div className="w-full lg:w-2/3 h-[50vh] lg:h-full glass rounded-[3rem] overflow-hidden relative border border-white/10 p-2 shadow-2xl">
         {selectedOrder ? (
-          <div className="w-full h-full rounded-[2.5rem] overflow-hidden bg-slate-900 relative">
-            {/* Placeholder Map in case API Key is missing - real API Key required for PROD */}
-            <APIProvider apiKey="YOUR_GOOGLE_MAPS_API_KEY">
-              <Map
-                defaultZoom={14}
-                defaultCenter={{ lat: selectedOrder.lat, lng: selectedOrder.lng }}
-                mapId="DEMO_MAP_ID"
-                disableDefaultUI={true}
-                className="w-full h-full"
-              >
-                <Marker position={{ lat: selectedOrder.lat, lng: selectedOrder.lng }} />
-                
-                {/* Simuler position hub vers domicile */}
-                {selectedOrder.status === 'En route' && (
-                  <Marker 
-                    position={{ lat: selectedOrder.lat + 0.005, lng: selectedOrder.lng - 0.005 }} 
-                    icon={{
-                        url: 'data:image/svg+xml;utf8,<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3000/svg"><path d="M5 14L5 19C5 20.1046 5.89543 21 7 21L17 21C18.1046 21 19 20.1046 19 19L19 14M5 14L19 14M5 14L9 7H15L19 14" stroke="%233b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="18" r="1" fill="%233b82f6"/><circle cx="16" cy="18" r="1" fill="%233b82f6"/></svg>'
-                    }}
-                  />
-                )}
-              </Map>
-            </APIProvider>
+          <div className="w-full h-full rounded-[2.5rem] overflow-hidden bg-[#0d1b2a] relative">
+            <MapContainer
+              center={[selectedOrder.lat, selectedOrder.lng]}
+              zoom={14}
+              scrollWheelZoom={true}
+              className="w-full h-full z-0"
+              style={{ background: '#0d1b2a' }}
+            >
+              <ChangeView center={[selectedOrder.lat, selectedOrder.lng]} />
+              
+              {/* Utilisation des tuiles CartoDB Dark (beau look pour le mode sombre) */}
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              />
+
+              <Marker position={[selectedOrder.lat, selectedOrder.lng]} icon={defaultIcon} />
+              
+            </MapContainer>
             
-            <div className="absolute bottom-6 left-6 right-6 p-6 rounded-[2rem] glass border border-white/10 backdrop-blur-xl flex items-center justify-between z-10">
+            {/* Overlay Info client */}
+            <div className="absolute bottom-6 left-6 right-6 p-6 rounded-[2rem] glass border border-white/10 backdrop-blur-xl flex items-center justify-between z-[1000]">
               <div className="flex items-center gap-4">
                 <div className="h-14 w-14 rounded-[1.5rem] bg-orange-500/20 text-orange-500 flex items-center justify-center">
                   <HiLocationMarker size={24} />
@@ -127,7 +140,7 @@ export default function Orders() {
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-sm font-bold text-slate-400 uppercase tracking-wider">Statut Livreur</div>
+                <div className="text-sm font-bold text-slate-400 font-sm uppercase tracking-wider">Statut Livreur</div>
                 <div className={`text-xl font-black ${selectedOrder.status === 'Livré' ? 'text-green-400' : selectedOrder.status === 'En route' ? 'text-blue-400' : 'text-orange-400'}`}>
                     {selectedOrder.status}
                 </div>
