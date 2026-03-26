@@ -1,73 +1,74 @@
-# React + TypeScript + Vite
+# 🔥 GOMA GAZ ENERGY - L'énergie de demain pour Goma
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Bienvenue sur le dépôt officiel de **GOMA GAZ ENERGY**, une application web moderne et performante dédiée à la transition énergétique et à la distribution de gaz butane dans la ville de Goma, Nord-Kivu, RDC. 🇨🇩⚡
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🌍 Vision du Projet
+GOMA GAZ ENERGY n'est pas seulement une boutique en ligne, c'est une solution complète pour faciliter l'accès à une énergie propre et sécurisée. Notre mission est de propulser le quotidien des habitants de Goma grâce à une technologie de pointe et un service de livraison irréprochable.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🎯 Fonctionnalités Principales
 
-## Expanding the ESLint configuration
+### 🗣️ Support Multilingue (Unique au Nord-Kivu !)
+L'application est entièrement traduite en trois langues pour être accessible à tous les habitants de la région :
+*   **Français (FR)** : Pour l'administration et l'usage courant.
+*   **English (EN)** : Pour nos partenaires internationaux.
+*   **Swahili (SW)** : Pour une proximité maximale avec la population locale de Goma.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 📍 Suivi de Livraison en Temps Réel
+Grâce à l'intégration de **Leaflet (OpenStreetMap)**, suivez votre bouteille de gaz depuis l'entrepôt jusqu'à votre porte sur une carte interactive élégante, le tout gratuitement et sans aucune erreur de clé API.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 🌓 Mode Sombre & Clair (UI/UX Premium)
+Un design "Glassmorphism" moderne avec des animations fluides. L'utilisateur peut basculer entre le mode sombre et le mode clair d'un simple clic pour un confort de lecture optimal.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 🎡 Carrousel de Produits Infini
+Une navigation innovante dans la boutique et sur l'accueil avec des produits qui circulent de manière infinie, incluant une **pause automatique au survol** pour faciliter l'achat.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 🛰️ Plan Stratégique Vision 2030
+Découvrez les 3 phases de notre développement futur pour faire de Goma une ville 100% propre énergétiquement d'ici 2030.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🛠️ Stack Technique
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+*   **Frontend** : [React.js](https://reactjs.org/) + [Vite](https://vitejs.dev/)
+*   **Animations** : [Framer Motion](https://www.framer.com/motion/)
+*   **Cartographie** : [Leaflet](https://leafletjs.com/) & OpenStreetMap
+*   **Style** : CSS Moderne & Glassmorphism
+*   **Icons** : [React Icons](https://react-icons.github.io/react-icons/) (Hi & Fa)
+*   **Gestion d'état** : React Context API
+
+---
+
+## 🚀 Installation Locale
+
+1.  **Cloner le dépôt** :
+    ```bash
+    git clone https://github.com/merveillebalume2-boop/goma-gaz-energy.git
+    cd goma-gaz-energy
+    ```
+
+2.  **Installer les dépendances** :
+    ```bash
+    npm install
+    ```
+
+3.  **Lancer le serveur de développement** :
+    ```bash
+    npm run dev
+    ```
+
+---
+
+## 🧑‍💻 Auteur
+Développé avec passion par **Merveille Balume**. 🚀🦾✨🐾
+*   **Lien Portfolio** : [Voir mon travail](https://merveillebalume2-boop.github.io/Mon-portfolio/)
+*   **LinkedIn** : [Profil Professionnel](https://www.linkedin.com/in/merveille-balume-813817375/)
+*   **GitHub** : [merveillebalume2-boop](https://github.com/merveillebalume2-boop)
+
+---
+
+## 🛡️ Licence
+Tous droits réservés © 2026 - Goma Energy Solution.
