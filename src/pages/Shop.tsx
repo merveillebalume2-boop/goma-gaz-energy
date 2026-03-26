@@ -1,26 +1,26 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiShoppingCart, HiCheckCircle, HiX, HiFire, HiCube, HiChartBar, HiUsers, HiCash } from 'react-icons/hi';
+import { HiShoppingCart, HiFire, HiCube, HiChartBar, HiUsers, HiCash } from 'react-icons/hi';
 import { ImSpinner8 } from 'react-icons/im';
 import { useCart, type Product } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
 import { API_BASE_URL } from '../config';
+import { useNavigate } from 'react-router-dom';
 
 export default function Shop() {
   const { addToCart, cartCount, total } = useCart();
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [products, setProducts] = useState<(Product & { stock?: number })[]>([]);
   const [loading, setLoading] = useState(true);
-  const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/products`)
       .then(res => res.json())
       .then(data => {
-        // Simuler des stocks pour la démonstration
         const productsWithStock = data.map((p: any) => ({
             ...p,
-            stock: Math.floor(Math.random() * 20) + 5 // Stock entre 5 et 25
+            stock: Math.floor(Math.random() * 20) + 5
         }));
         setProducts(productsWithStock);
         setLoading(false);
@@ -36,7 +36,7 @@ export default function Shop() {
       {/* Header et Stats de Ventes / Évolution */}
       <div className="flex flex-col xl:flex-row gap-8 items-start xl:items-center justify-between px-6">
         <header className="max-w-xl">
-            <h1 className="text-6xl font-black mb-4 tracking-tighter">{t('shop_title')}</h1>
+            <h1 className="text-6xl font-black mb-4 tracking-tighter uppercase">{t('shop_title')}</h1>
             <p className="text-xl text-slate-500 font-bold leading-relaxed">
             {t('shop_subtitle')}
             </p>
@@ -45,9 +45,9 @@ export default function Shop() {
         {/* CARTES DE STATISTIQUES (VENTES ET ÉVOLUTION) */}
         <div className="flex flex-wrap gap-4 w-full xl:w-auto">
             <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="glass p-6 rounded-[2.5rem] border border-white/5 flex items-center gap-6 flex-1 xl:min-w-[240px] shadow-xl"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="glass p-6 rounded-[2.5rem] border border-white/5 flex items-center gap-6 flex-1 xl:min-w-[220px] shadow-xl"
             >
                 <div className="h-14 w-14 bg-orange-500/20 text-orange-500 rounded-2xl flex items-center justify-center">
                     <HiChartBar size={28} />
@@ -59,25 +59,25 @@ export default function Shop() {
             </motion.div>
 
             <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.1 }}
-                className="glass p-6 rounded-[2.5rem] border border-white/5 flex items-center gap-6 flex-1 xl:min-w-[240px] shadow-xl"
+                className="glass p-6 rounded-[2.5rem] border border-white/5 flex items-center gap-6 flex-1 xl:min-w-[220px] shadow-xl"
             >
                 <div className="h-14 w-14 bg-green-500/20 text-green-500 rounded-2xl flex items-center justify-center">
                     <HiCash size={28} />
                 </div>
                 <div>
-                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Ventes Totales</div>
+                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Ventes</div>
                     <div className="text-2xl font-black">$42.5k</div>
                 </div>
             </motion.div>
 
             <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                className="glass p-6 rounded-[2.5rem] border border-white/5 flex items-center gap-6 flex-1 xl:min-w-[240px] shadow-xl"
+                className="glass p-6 rounded-[2.5rem] border border-white/5 flex items-center gap-6 flex-1 xl:min-w-[220px] shadow-xl"
             >
                 <div className="h-14 w-14 bg-blue-500/20 text-blue-500 rounded-2xl flex items-center justify-center">
                     <HiUsers size={28} />
@@ -93,15 +93,15 @@ export default function Shop() {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 space-y-4 px-6">
           <ImSpinner8 size={48} className="text-orange-500 animate-spin" />
-          <p className="text-slate-500 font-black uppercase tracking-widest text-xs">{t('shop_loading')}</p>
+          <p className="text-slate-500 font-black uppercase tracking-widest text-xs uppercase">{t('shop_loading')}</p>
         </div>
       ) : (
-        /* INFINITE CAROUSEL FOR PRODUCTS WITH STOCK INFO */
+        /* INFINITE CAROUSEL FOR PRODUCTS */
         <section className="relative w-full">
             <div className="max-w-full overflow-hidden">
                 <motion.div 
                     animate={{ x: ["0%", "-50%"] }}
-                    transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+                    transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
                     whileHover={{ animationPlayState: 'paused' }}
                     className="flex gap-8 w-max px-8"
                 >
@@ -151,86 +151,34 @@ export default function Shop() {
                     ))}
                 </motion.div>
             </div>
-            
             <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none" />
         </section>
       )}
 
-      {/* Floating Checkout Toggle */}
+      {/* Floating Checkout Toggle REDIRECTING TO /CHECKOUT */}
       <AnimatePresence>
         {cartCount > 0 && (
           <motion.button
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            onClick={() => setCheckoutModalOpen(true)}
-            className="fixed bottom-8 right-8 left-8 md:right-12 md:left-auto md:w-80 h-24 bg-orange-500 text-white rounded-[2.5rem] shadow-2xl shadow-orange-500/40 flex items-center justify-between px-8 z-[1001] transition-transform hover:scale-105 active:scale-95 border-4 border-white dark:border-slate-950"
+            onClick={() => navigate('/checkout')}
+            className="fixed bottom-8 right-8 left-8 md:right-12 md:left-auto md:w-96 h-24 bg-orange-500 text-white rounded-[2.5rem] shadow-2xl shadow-orange-500/60 flex items-center justify-between px-10 z-[1001] transition-transform hover:scale-105 active:scale-95 border-b-8 border-orange-700/50"
           >
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 bg-white/20 rounded-xl flex items-center justify-center">
-                <HiShoppingCart size={28} />
+            <div className="flex items-center gap-6">
+              <div className="h-14 w-14 bg-white/20 rounded-2xl flex items-center justify-center">
+                <HiShoppingCart size={32} />
               </div>
-              <div className="text-left">
-                <div className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80">{t('order_summary')}</div>
-                <div className="font-black text-2xl">${total.toFixed(2)}</div>
+              <div className="text-left font-black">
+                <div className="text-[10px] uppercase tracking-[0.2em] opacity-80">{t('order_summary')}</div>
+                <div className="text-3xl tracking-tighter">${total.toFixed(2)}</div>
               </div>
             </div>
-            <div className="h-10 w-10 bg-white text-orange-500 rounded-full flex items-center justify-center font-black">
+            <div className="h-12 w-12 bg-white text-orange-500 rounded-full flex items-center justify-center font-black text-xl">
               {cartCount}
             </div>
           </motion.button>
-        )}
-      </AnimatePresence>
-
-      {/* Checkout Modal */}
-      <AnimatePresence>
-        {checkoutModalOpen && (
-          <div className="fixed inset-0 z-[2000] flex items-center justify-center p-6">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" 
-              onClick={() => setCheckoutModalOpen(false)} 
-            />
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="w-full max-w-lg glass bg-white dark:bg-slate-900 rounded-[3rem] p-10 relative z-10 border border-white/5"
-            >
-              <button 
-                onClick={() => setCheckoutModalOpen(false)}
-                className="absolute top-8 right-8 h-12 w-12 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400 hover:text-orange-500 transition-all"
-              >
-                <HiX size={32} />
-              </button>
-              
-              <div className="mb-10 text-center">
-                <h2 className="text-4xl font-black mb-2 uppercase tracking-tighter">{t('order_summary')}</h2>
-                <p className="text-slate-500 font-bold">{t('checkout_desc')}</p>
-              </div>
-
-              <div className="space-y-4 mb-10">
-                <div className="flex justify-between items-center bg-slate-950/20 p-8 rounded-3xl border border-white/5">
-                  <span className="font-black text-slate-500 uppercase tracking-widest text-[10px]">{t('cart_total')}</span>
-                  <span className="text-5xl font-black">${total.toFixed(2)}</span>
-                </div>
-              </div>
-
-              <button
-                onClick={() => {
-                   setCheckoutModalOpen(false);
-                   alert(t('order_sent'));
-                }}
-                className="w-full py-6 bg-orange-500 text-white rounded-3xl font-black text-xl shadow-xl shadow-orange-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4 border-b-8 border-orange-700/50"
-              >
-                <HiCheckCircle size={28} />
-                {t('btn_confirm')}
-              </button>
-            </motion.div>
-          </div>
         )}
       </AnimatePresence>
     </div>
