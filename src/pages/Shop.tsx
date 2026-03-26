@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiShoppingCart, HiCheckCircle, HiX, HiFire, HiCube } from 'react-icons/hi';
+import { HiShoppingCart, HiCheckCircle, HiX, HiFire, HiCube, HiChartBar, HiUsers } from 'react-icons/hi';
 import { ImSpinner8 } from 'react-icons/im';
 import { useCart, type Product } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -28,12 +28,47 @@ export default function Shop() {
 
   return (
     <div className="space-y-12 pb-20 overflow-hidden">
-      <header className="max-w-3xl px-6">
-        <h1 className="text-6xl font-black mb-6 tracking-tighter">{t('shop_title')}</h1>
-        <p className="text-xl text-slate-500 font-bold leading-relaxed">
-          {t('shop_subtitle')}
-        </p>
-      </header>
+      {/* Header et Stats d'Évolution */}
+      <div className="flex flex-col lg:flex-row gap-8 items-start lg:items-center justify-between px-6">
+        <header className="max-w-2xl">
+            <h1 className="text-6xl font-black mb-4 tracking-tighter">{t('shop_title')}</h1>
+            <p className="text-xl text-slate-500 font-bold leading-relaxed">
+            {t('shop_subtitle')}
+            </p>
+        </header>
+
+        {/* LES DEUX CARTES D'ÉVOLUTION RE-AJOUTÉES */}
+        <div className="flex flex-wrap gap-4">
+            <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="glass p-6 rounded-[2.5rem] border border-white/5 flex items-center gap-6 min-w-[240px] shadow-xl"
+            >
+                <div className="h-14 w-14 bg-orange-500/20 text-orange-500 rounded-2xl flex items-center justify-center">
+                    <HiChartBar size={28} />
+                </div>
+                <div>
+                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Croissance</div>
+                    <div className="text-2xl font-black">+24%</div>
+                </div>
+            </motion.div>
+
+            <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 }}
+                className="glass p-6 rounded-[2.5rem] border border-white/5 flex items-center gap-6 min-w-[240px] shadow-xl"
+            >
+                <div className="h-14 w-14 bg-blue-500/20 text-blue-500 rounded-2xl flex items-center justify-center">
+                    <HiUsers size={28} />
+                </div>
+                <div>
+                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Clients</div>
+                    <div className="text-2xl font-black">1.2k+</div>
+                </div>
+            </motion.div>
+        </div>
+      </div>
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 space-y-4 px-6">
@@ -47,10 +82,9 @@ export default function Shop() {
                 <motion.div 
                     animate={{ x: ["0%", "-50%"] }}
                     transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                    whileHover={{ animationPlayState: 'paused' }} // PAUSE ON HOVER!
+                    whileHover={{ animationPlayState: 'paused' }}
                     className="flex gap-8 w-max px-8"
                 >
-                    {/* On double la liste des produits pour l'effet infini */}
                     {[...products, ...products].map((product, i) => (
                         <motion.div
                             key={`${product.id}-${i}`}
@@ -87,7 +121,6 @@ export default function Shop() {
                 </motion.div>
             </div>
             
-            {/* Guide visuel pour indiquer que ça bouge */}
             <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none" />
             <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-slate-50 dark:from-slate-950 to-transparent z-10 pointer-events-none" />
         </section>
