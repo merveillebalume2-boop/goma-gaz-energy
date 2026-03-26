@@ -1,113 +1,90 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Zap, Activity, Sun, Leaf, Atom, Wifi } from 'lucide-react';
-
-const pillars = [
-  { id: 1, title: 'Hydroélectricité', desc: 'Exploitation responsable des ressources hydrauliques pour compléter le réseau existant.', icon: Zap },
-  { id: 2, title: 'Gaz Méthane', desc: 'Extraction sécurisée et valorisation du gaz méthane du Lac Kivu en électricité verte est renouvellable.', icon: Activity },
-  { id: 3, title: 'Énergie Solaire', desc: 'Déploiement de fermes solaires et de micro-réseaux pour l\'autonomie des quartiers périphériques.', icon: Sun },
-  { id: 4, title: 'Biomasse', desc: 'Valorisation des déchets organiques urbains et ruraux via des digesteurs modernes et écologiques.', icon: Leaf },
-  { id: 5, title: 'Nucléaire Civil', desc: 'Initiation d\'un programme de recherche sur les SMR (Small Modular Reactors) pour 2040.', icon: Atom },
-  { id: 6, title: 'Smart Grid', desc: 'Intégration de compteurs intelligents et d\'infrastructures connectées pour optimiser la distribution.', icon: Wifi }
-];
-
-const roadmap = [
-  { year: 2026, text: 'Phase I : Lancement de Goma Gaz. Adoption massive par 15k par foyers et diminution visible de la déforestation.' },
-  { year: 2027, text: 'Phase II : Intégration des paiements mobiles, mise en place des micro-réseaux solaires pour zones hors-réseau.' },
-  { year: 2028, text: 'Phase III : Mise en service de la première unité d\'extraction locale de biogaz et valorisation de la biomasse.' },
-  { year: 2029, text: 'Phase IV : Extension nationale du Smart Grid et début des forages commerciaux du méthane du Lac Kivu.' },
-  { year: 2030, text: 'Vision Accomplie : 80% des besoins de l\'Est congolais couverts par des énergies propres et souveraines.' },
-];
+import { HiLightningBolt, HiGlobe, HiChevronRight, HiFire, HiSparkles } from 'react-icons/hi';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Vision2030() {
-  const [activeYear, setActiveYear] = useState<number>(2026);
+  const { t } = useLanguage();
+
+  const phases = [
+    {
+      id: 1,
+      title: t('phase_1_title'),
+      desc: t('phase_1_desc'),
+      icon: <HiFire size={24} />,
+      color: 'bg-orange-500',
+    },
+    {
+      id: 2,
+      title: t('phase_2_title'),
+      desc: t('phase_2_desc'),
+      icon: <HiGlobe size={24} />,
+      color: 'bg-blue-500',
+    },
+    {
+      id: 3,
+      title: t('phase_3_title'),
+      desc: t('phase_3_desc'),
+      icon: <HiSparkles size={24} />,
+      color: 'bg-yellow-500',
+    },
+  ];
 
   return (
-    <div className="space-y-16 pb-24">
-      {/* Hero Vision */}
-      <section className="text-center max-w-4xl mx-auto space-y-6 pt-12">
-        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="inline-block py-2 px-6 rounded-full bg-slate-900 border border-white/5 text-orange-500 font-bold mb-4">
-          Le Plan d'Action Stratégique
+    <div className="py-8 md:py-20 space-y-12 md:space-y-20 px-2 sm:px-6">
+      <header className="max-w-4xl mx-auto text-center px-2">
+        <motion.div
+           initial={{ opacity: 0, scale: 0.9 }}
+           animate={{ opacity: 1, scale: 1 }}
+           className="mb-6 inline-flex items-center gap-2 bg-orange-500/10 text-orange-500 px-4 py-1.5 rounded-full border border-orange-500/20 shadow-sm"
+        >
+          <HiLightningBolt size={16} />
+          <span className="text-[10px] font-black uppercase tracking-widest">{t('nav_vision')}</span>
         </motion.div>
-        <motion.h1
-          initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-          className="text-5xl lg:text-7xl font-black text-white px-4"
-        >
-          Vision Énergétique <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">2030</span>
-        </motion.h1>
-        <motion.p
-          initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
-          className="text-slate-400 text-xl max-w-2xl mx-auto font-medium"
-        >
-          Plus qu'une application, un écosystème entier pour garantir la souveraineté énergétique et écologique du Nord-Kivu.
-        </motion.p>
-      </section>
+        <h1 className="text-3xl sm:text-5xl md:text-7xl font-black mb-4 sm:mb-6 tracking-tighter leading-tight">
+          {t('vision_title')}
+        </h1>
+        <p className="text-sm sm:text-base md:text-xl text-slate-500 dark:text-slate-400 font-bold max-w-2xl mx-auto px-4">
+          {t('vision_subtitle')}
+        </p>
+      </header>
 
-      {/* 6 Piliers */}
-      <section className="space-y-12">
-        <h2 className="text-3xl font-black text-center border-b border-white/5 pb-8">Les 6 Piliers Fondamentaux</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {pillars.map((pillar, i) => (
-            <motion.div
-              key={pillar.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="glass p-8 rounded-[3rem] hover:-translate-y-2 transition-transform shadow-xl group border border-white/5 border-t-white/10"
-            >
-              <div className="h-20 w-20 rounded-[2rem] bg-slate-950 flex items-center justify-center mb-6 shadow-inner text-slate-300 group-hover:text-orange-500 group-hover:bg-slate-900 transition-colors border border-white/5">
-                <pillar.icon size={36} />
+      {/* Timeline / Phases */}
+      <div className="max-w-4xl mx-auto space-y-4 md:space-y-8 px-2">
+        {phases.map((phase, i) => (
+          <motion.div
+            key={phase.id}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.2 }}
+            className="glass p-5 sm:p-8 md:p-12 rounded-[2rem] sm:rounded-[3rem] border border-white/5 hover:bg-white/10 transition-all group flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-8"
+          >
+            {/* Phase Number / Icon */}
+            <div className={`h-12 w-12 sm:h-20 sm:w-20 shrink-0 ${phase.color} rounded-2xl sm:rounded-3xl flex items-center justify-center text-white shadow-xl group-hover:rotate-12 transition-transform`}>
+              {phase.icon}
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 text-center sm:text-left">
+              <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
+                 <span className="text-[10px] font-black text-orange-500 uppercase tracking-widest bg-orange-500/10 px-3 py-1 rounded-full">Phase {phase.id}</span>
               </div>
-              <h3 className="text-2xl font-bold mb-3">{pillar.title}</h3>
-              <p className="text-slate-400 font-medium leading-relaxed">{pillar.desc}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+              <h3 className="text-xl sm:text-3xl font-black mb-2 sm:mb-4 tracking-tight leading-tight uppercase">{phase.title}</h3>
+              <p className="text-xs sm:text-sm md:text-lg text-slate-500 dark:text-slate-400 font-bold leading-relaxed">
+                {phase.desc}
+              </p>
+            </div>
 
-      {/* Roadmap Interactive */}
-      <section className="glass rounded-[4rem] p-12 lg:p-20 shadow-2xl relative overflow-hidden border border-white/5">
-        <div className="absolute inset-0 bg-slate-900/50" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-orange-500/10 rounded-full blur-[100px]" />
+            <HiChevronRight className="hidden md:block text-slate-400 group-hover:translate-x-2 transition-transform opacity-30" size={32} />
+          </motion.div>
+        ))}
+      </div>
 
-        <div className="relative z-10 space-y-16">
-          <h2 className="text-4xl font-black text-center mb-12">Feuille de Route</h2>
-
-          <div className="flex justify-between items-center relative max-w-4xl mx-auto">
-            <div className="absolute left-0 right-0 h-1 bg-slate-800 rounded-full top-6 -z-10" />
-            {roadmap.map((item) => (
-              <div key={item.year} className="relative flex flex-col items-center group cursor-pointer" onClick={() => setActiveYear(item.year)}>
-                <div
-                  className={`h-12 w-12 rounded-full border-[4px] flex items-center justify-center font-bold text-sm transition-colors duration-300 ${activeYear === item.year
-                      ? 'bg-orange-500 border-slate-950 text-white scale-125 shadow-[0_0_20px_rgba(249,115,22,0.5)]'
-                      : 'bg-slate-900 border-slate-700 text-slate-400 group-hover:border-orange-500'
-                    }`}
-                >
-                  {item.year - 2000}
-                </div>
-                <div className={`mt-4 font-bold text-lg transition-colors ${activeYear === item.year ? 'text-white' : 'text-slate-500'}`}>
-                  {item.year}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="max-w-2xl mx-auto text-center h-48 flex items-center justify-center">
-            {roadmap.filter(r => r.year === activeYear).map(item => (
-              <motion.div
-                key={item.year}
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                className="bg-slate-950/80 backdrop-blur border border-white/10 p-8 rounded-[3rem] text-xl font-medium text-slate-300 leading-relaxed shadow-lg"
-              >
-                {item.text}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Footer Decoration */}
+      <div className="max-w-xs mx-auto text-center opacity-30 pt-10">
+         <div className="h-0.5 w-full bg-slate-300 dark:bg-white/10 rounded-full" />
+         <p className="text-[8px] font-black uppercase tracking-widest pt-4">GOMA ENERGY STRATEGY CENTER</p>
+      </div>
     </div>
   );
 }

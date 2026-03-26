@@ -33,6 +33,16 @@ export const translations: Translations = {
   feat_eco_title: { fr: 'Énergie Propre', en: 'Clean Energy', sw: 'Nishati Safi' },
   feat_eco_desc: { fr: 'Engagement pour la transition énergétique durable de la RDC.', en: 'Commitment to the sustainable energy transition of the DRC.', sw: 'Kujitolea kwa mabadiliko endelevu ya nishati ya DRC.' },
 
+  // Vision 2030 Page
+  vision_title: { fr: 'Plan Stratégique 2030', en: 'Strategic Plan 2030', sw: 'Mpango wa Kimkakati 2030' },
+  vision_subtitle: { fr: 'Bâtir un avenir énergétique durable pour Goma et le Nord-Kivu.', en: 'Building a sustainable energy future for Goma and North Kivu.', sw: 'Kujenga mustakabali endelevu wa nishati kwa Goma na Kivu Kaskazini.' },
+  phase_1_title: { fr: 'Expansion de la Distribution (2025)', en: 'Distribution Expansion (2025)', sw: 'Upanuzi wa Usambazaji (2025)' },
+  phase_1_desc: { fr: 'Étendre notre réseau de points de vente dans tous les quartiers de Goma.', en: 'Extend our network of points of sale in all neighborhoods of Goma.', sw: 'Panua mtandao wetu wa sehemu za mauzo katika vitongoji vyote vya Goma.' },
+  phase_2_title: { fr: 'Transition Écologique (2027)', en: 'Ecological Transition (2027)', sw: 'Mabadiliko ya Ikolojia (2027)' },
+  phase_2_desc: { fr: 'Introduction de solutions de biogaz et réduction de l\'empreinte carbone.', en: 'Introduction of biogas solutions and reduction of the carbon footprint.', sw: 'Kuanzishwa kwa ufumbuzi wa biogas na kupunguza kiwango cha kaboni.' },
+  phase_3_title: { fr: 'Énergie pour Tous (2030)', en: 'Energy for All (2030)', sw: 'Nishati kwa Wote (2030)' },
+  phase_3_desc: { fr: 'Accès universel à une énergie propre et abordable pour toute la région.', en: 'Universal access to clean and affordable energy for the entire region.', sw: 'Upatikanaji wa nishati safi na ya bei nafuu kwa eneo lote.' },
+
   // Shop Page
   shop_title: { fr: 'Notre Boutique', en: 'Our Shop', sw: 'Duka Letu' },
   shop_subtitle: { fr: 'Commandez votre recharge de gaz en quelques secondes.', en: 'Order your gas refill in seconds.', sw: 'Agiza ujazo wako wa gesi kwa sekunde chache.' },
