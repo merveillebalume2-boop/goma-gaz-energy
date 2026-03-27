@@ -6,8 +6,9 @@ import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function Checkout() {
-  const { total, cartCount, clearCart, cartItems } = useCart();
+  const { total, cartCount, clearCart, cart } = useCart();
   const { t } = useLanguage();
+
   const navigate = useNavigate();
   const [activeBar, setActiveBar] = useState<number | null>(null);
 
@@ -44,10 +45,11 @@ export default function Checkout() {
         customer_phone: customer.phone,
         customer_address: customer.address || 'Goma Central',
         total_amount: total,
-        items: cartItems.map(item => `${item.name} (x${item.quantity})`).join(', '),
+        items: cart.map(item => `${item.name} (x${item.quantity})`).join(', '),
         timestamp: new Date().toLocaleString(),
         source: 'Web App Goma Gaz Energy'
     };
+
 
     try {
         // Envoi vers Zapier (Placeholder à remplacer par votre URL finale)
