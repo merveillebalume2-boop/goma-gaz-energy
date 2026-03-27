@@ -151,7 +151,28 @@ export default function Checkout() {
         </div>
 
         <button
-            onClick={() => {
+            onClick={async () => {
+               // --- AUTOMATISATION ZAPIER ---
+               const orderData = {
+                 event: 'NEW_ORDER',
+                 amount: total,
+                 items_count: cartCount,
+                 timestamp: new Date().toISOString(),
+                 location: 'Goma, Nord-Kivu',
+                 status: 'PENDING'
+               };
+
+               // Envoi vers le Webhook Zapier (Remplacez URL_ZAPIER par la vôtre)
+               try {
+                 await fetch('https://hooks.zapier.com/hooks/catch/1234567/abcde/', { // Placeholder Zapier
+                   method: 'POST',
+                   body: JSON.stringify(orderData),
+                 });
+                 console.log('Zapier Automation Triggered! 🚀');
+               } catch (error) {
+                 console.error('Zapier Error:', error);
+               }
+
                alert(t('order_sent'));
                clearCart();
                navigate('/orders');
@@ -160,6 +181,7 @@ export default function Checkout() {
         >
             {t('btn_confirm')}
         </button>
+
       </motion.div>
     </div>
   );
