@@ -1,15 +1,19 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { HiArrowLeft, HiArchive, HiArrowSmUp } from 'react-icons/hi';
+import { HiArrowLeft, HiArchive, HiArrowSmUp, HiLightningBolt, HiUser, HiPhone, HiTruck } from 'react-icons/hi';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function Checkout() {
-  const { total, cartCount, clearCart } = useCart();
+  const { total, cartCount, clearCart, cartItems } = useCart();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [activeBar, setActiveBar] = useState<number | null>(null);
+
+  // Formulaire Client pour l'automatisation Zapier
+  const [customer, setCustomer] = useState({ name: '', phone: '', address: '' });
+  const [isOrdering, setIsOrdering] = useState(false);
 
   if (cartCount === 0) {
     return (
@@ -17,7 +21,7 @@ export default function Checkout() {
         <div className="h-32 w-32 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center text-slate-300">
            <HiArchive size={64} />
         </div>
-        <h2 className="text-4xl font-black uppercase">{t('select_order')}</h2>
+        <h2 className="text-4xl font-black">{t('select_order')}</h2>
         <Link to="/shop" className="px-10 py-5 bg-orange-500 text-white rounded-[2rem] font-black flex items-center gap-3">
            <HiArrowLeft /> {t('nav_shop')}
         </Link>
@@ -25,164 +29,180 @@ export default function Checkout() {
     );
   }
 
+  const handleOrderConfirm = async () => {
+    if (!customer.name || !customer.phone) {
+        alert("SVP! Veuillez remplir votre nom et numéro de téléphone pour la livraison.");
+        return;
+    }
+
+    setIsOrdering(true);
+
+    // --- DONNÉES COMPLÈTES POUR ZAPIER ---
+    const orderDetails = {
+        event: 'NEW_ORDER_GOMA_GAZ',
+        customer_name: customer.name,
+        customer_phone: customer.phone,
+        customer_address: customer.address || 'Goma Central',
+        total_amount: total,
+        items: cartItems.map(item => `${item.name} (x${item.quantity})`).join(', '),
+        timestamp: new Date().toLocaleString(),
+        source: 'Web App Goma Gaz Energy'
+    };
+
+    try {
+        // Envoi vers Zapier (Placeholder à remplacer par votre URL finale)
+        await fetch('https://hooks.zapier.com/hooks/catch/1234567/abcde/', {
+            method: 'POST',
+            body: JSON.stringify(orderDetails),
+        });
+        console.log('Automated Order sent to Zapier! 🚀');
+    } catch (e) {
+        console.error('Automation Error:', e);
+    }
+
+    setTimeout(() => {
+        alert(`${t('order_sent')} 🎉\nMerci ${customer.name}, nous vous contacterons au ${customer.phone}`);
+        clearCart();
+        setIsOrdering(false);
+        navigate('/orders');
+    }, 1500);
+  };
+
   return (
-    <div className="max-w-6xl mx-auto py-12 px-6 space-y-12 pb-32 font-sans">
-      {/* Header avec bouton Retour */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
-        <div>
-           <button 
-             onClick={() => navigate('/shop')}
-             className="flex items-center gap-2 text-slate-500 font-bold hover:text-orange-500 transition-colors mb-4 group lowercase"
-           >
-             <HiArrowLeft className="group-hover:-translate-x-2 transition-transform" />
-             {t('nav_shop')}
-           </button>
-           <h1 className="text-6xl font-black tracking-tighter uppercase">{t('order_summary')}</h1>
-        </div>
-        <div className="bg-orange-500/10 text-orange-500 p-8 rounded-[3rem] border border-orange-500/20 text-center">
-            <div className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-60">{t('cart_total')}</div>
-            <div className="text-5xl font-black">${total.toFixed(2)}</div>
-        </div>
+    <div className="max-w-6xl mx-auto py-12 px-6 space-y-12 pb-32">
+      {/* Header */}
+      <header className="flex flex-col md:items-start mb-12">
+        <button 
+            onClick={() => navigate('/shop')}
+            className="flex items-center gap-2 text-slate-500 font-bold hover:text-orange-500 transition-colors mb-6 group border px-4 py-2 rounded-xl border-slate-200 dark:border-white/10"
+        >
+            <HiArrowLeft className="group-hover:-translate-x-2 transition-transform" />
+            {t('nav_shop')}
+        </button>
+        <h1 className="text-6xl font-black tracking-tighter uppercase">{t('order_summary')}</h1>
       </header>
 
-      {/* SECTION DES DEUX CARTES D'ÉVOLUTION STATISTIQUE (TOUTES ICÔNES SUPPRIMÉES) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* CARTE 1 : ÉVOLUTION DES VENTES (CHARTS) */}
-        <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="glass p-12 rounded-[4rem] border border-white/5 shadow-2xl relative overflow-hidden group"
-        >
-            <div className="flex items-center justify-between mb-12">
-                <h3 className="text-2xl font-black uppercase tracking-widest text-orange-500">Ventes Annuelle</h3>
-                <span className="text-green-500 font-black text-sm">+18% Evolution</span>
-            </div>
-            
-            {/* Visualisation Statistique */}
-            <div className="h-56 flex items-end gap-3 px-2 relative">
-                {[40, 60, 45, 90, 65, 80, 100].map((h, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center justify-end h-full relative group/bar cursor-pointer" onClick={() => setActiveBar(activeBar === i ? null : i)}>
-                        <AnimatePresence>
-                            {activeBar === i && (
-                                <motion.div 
-                                    initial={{ opacity: 0, y: 10, scale: 0 }}
-                                    animate={{ opacity: 1, y: -5, scale: 1 }}
-                                    exit={{ opacity: 0, y: 10, scale: 0 }}
-                                    className="absolute -top-12 text-green-500 flex flex-col items-center gap-1"
-                                >
-                                    <span className="text-xs font-black">+24%</span>
-                                    <HiArrowSmUp size={28} className="animate-bounce" />
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        <motion.div 
-                            initial={{ height: 0 }}
-                            animate={{ height: `${h}%` }}
-                            whileHover={{ scaleX: 1.1, backgroundColor: "#f97316" }}
-                            transition={{ delay: i * 0.1, duration: 1 }}
-                            className={`w-full rounded-t-2xl transition-all duration-300 ${activeBar === i ? 'bg-orange-500 shadow-2xl shadow-orange-500/30' : 'bg-slate-200 dark:bg-white/10'}`}
-                        />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+        {/* COLONNE GAUCHE : FORMULAIRE CLIENT */}
+        <div className="lg:col-span-2 space-y-8">
+            <section className="glass p-10 rounded-[3.5rem] border border-white/5 shadow-2xl space-y-8">
+                <div className="flex items-center gap-4 mb-4">
+                    <div className="h-12 w-12 bg-orange-500/10 text-orange-500 rounded-2xl flex items-center justify-center">
+                        <HiUser size={24} />
                     </div>
-                ))}
-            </div>
-            <div className="flex justify-between mt-8 text-[10px] font-black text-slate-400 uppercase tracking-widest px-4">
-                <span>Jan</span><span>Mars</span><span>Mai</span><span>Juil</span><span>Sept</span><span>Nov</span><span>Déc</span>
-            </div>
-        </motion.div>
+                    <h3 className="text-2xl font-black uppercase tracking-tight">Vos Coordonnées</h3>
+                </div>
 
-        {/* CARTE 2 : ÉVOLUTION DES STOCKS (GAUGE) */}
-        <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="glass p-12 rounded-[4rem] border border-white/5 shadow-2xl relative overflow-hidden group"
-        >
-            <div className="flex items-center justify-between mb-12">
-                <h3 className="text-2xl font-black uppercase tracking-widest text-blue-500">Capacité Stock</h3>
-                <span className="text-slate-400 font-black text-sm">92% Global</span>
-            </div>
-
-            <div className="space-y-10 mt-10">
-                <div className="space-y-4">
-                    <div className="flex justify-between text-xs font-black uppercase tracking-widest mb-2">
-                        <span>Gaz 6kg (Petit)</span>
-                        <span className="text-orange-500">85%</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-4">Nom Complet</label>
+                        <div className="relative">
+                            <HiUser className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <input 
+                                type="text"
+                                placeholder="Merveille Balume"
+                                className="w-full h-16 pl-14 pr-6 rounded-2xl bg-slate-100 dark:bg-white/5 border border-transparent focus:border-orange-500 transition-all font-bold"
+                                value={customer.name}
+                                onChange={(e) => setCustomer({...customer, name: e.target.value})}
+                            />
+                        </div>
                     </div>
-                    <div className="h-5 bg-slate-900 rounded-full overflow-hidden border border-white/5 shadow-inner">
-                        <motion.div 
-                            initial={{ width: 0 }} 
-                            animate={{ width: '85%' }} 
-                            transition={{ duration: 1.5, ease: "easeOut" }}
-                            className="h-full bg-orange-500 shadow-lg shadow-orange-500/20" 
-                        />
+                    <div className="space-y-3">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-4">Numéro WhatsApp</label>
+                        <div className="relative">
+                            <HiPhone className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <input 
+                                type="tel"
+                                placeholder="+243 9..."
+                                className="w-full h-16 pl-14 pr-6 rounded-2xl bg-slate-100 dark:bg-white/5 border border-transparent focus:border-orange-500 transition-all font-bold"
+                                value={customer.phone}
+                                onChange={(e) => setCustomer({...customer, phone: e.target.value})}
+                            />
+                        </div>
                     </div>
                 </div>
 
-                <div className="space-y-4">
-                    <div className="flex justify-between text-xs font-black uppercase tracking-widest mb-2">
-                        <span>Gaz 12kg (Moyen)</span>
-                        <span className="text-blue-500">62%</span>
-                    </div>
-                    <div className="h-5 bg-slate-900 rounded-full overflow-hidden border border-white/5 shadow-inner">
-                        <motion.div 
-                            initial={{ width: 0 }} 
-                            animate={{ width: '62%' }} 
-                            transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
-                            className="h-full bg-blue-500 shadow-lg shadow-blue-500/20" 
+                <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 px-4">Adresse à Goma (Quartier)</label>
+                    <div className="relative">
+                        <HiTruck className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input 
+                            type="text"
+                            placeholder="Quartier Himbi, Avenue..."
+                            className="w-full h-16 pl-14 pr-6 rounded-2xl bg-slate-100 dark:bg-white/5 border border-transparent focus:border-orange-500 transition-all font-bold"
+                            value={customer.address}
+                            onChange={(e) => setCustomer({...customer, address: e.target.value})}
                         />
                     </div>
                 </div>
-            </div>
-        </motion.div>
-      </div>
+            </section>
 
-      {/* Résumé Final SANS AUCUNE ICÔNE */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        className="glass p-16 rounded-[4.5rem] border border-white/10 shadow-3xl text-center space-y-10"
-      >
-        <div className="space-y-6">
-            <h2 className="text-4xl font-black uppercase tracking-tighter">{t('checkout_desc')}</h2>
-            <p className="text-slate-500 font-black max-w-xl mx-auto leading-relaxed text-lg">
-               La logistique de Goma Gaz est en mouvement. Confirmez pour lancer votre livraison à domicile.
-            </p>
+            {/* STATISTIQUES D'ÉVOLUTION RE-STYLISTÉES */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="glass p-10 rounded-[3.5rem] border border-white/5 shadow-xl relative overflow-hidden group">
+                    <div className="flex items-center justify-between mb-8">
+                        <h3 className="text-xl font-black uppercase tracking-widest text-orange-500">Ventes annuel</h3>
+                        <span className="text-green-500 font-black text-xs">+18%</span>
+                    </div>
+                    <div className="h-40 flex items-end gap-2 relative">
+                        {[40, 60, 45, 90, 65, 80, 100].map((h, i) => (
+                            <div key={i} className="flex-1 flex flex-col items-center justify-end h-full relative" onClick={() => setActiveBar(i)}>
+                                <AnimatePresence>
+                                    {activeBar === i && (
+                                        <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }} className="absolute -top-8 text-green-500">
+                                            <HiArrowSmUp size={24} className="animate-bounce" />
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                                <motion.div animate={{ height: `${h}%` }} className={`w-full rounded-t-xl transition-all ${activeBar === i ? 'bg-orange-500' : 'bg-slate-200 dark:bg-white/10'}`} />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                
+                <div className="glass p-10 rounded-[4rem] border border-white/5 shadow-xl">
+                    <h3 className="text-xl font-black uppercase tracking-widest text-blue-500 mb-8">Stock Global</h3>
+                    <div className="space-y-6">
+                        <div className="h-4 bg-slate-900 rounded-full overflow-hidden border border-white/5">
+                            <motion.div initial={{ width: 0 }} animate={{ width: '85%' }} className="h-full bg-orange-500 shadow-lg" />
+                        </div>
+                        <div className="h-4 bg-slate-900 rounded-full overflow-hidden border border-white/5">
+                            <motion.div initial={{ width: 0 }} animate={{ width: '62%' }} className="h-full bg-blue-500 shadow-lg" />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <button
-            onClick={async () => {
-               // --- AUTOMATISATION ZAPIER ---
-               const orderData = {
-                 event: 'NEW_ORDER',
-                 amount: total,
-                 items_count: cartCount,
-                 timestamp: new Date().toISOString(),
-                 location: 'Goma, Nord-Kivu',
-                 status: 'PENDING'
-               };
+        {/* COLONNE DROITE : RÉSUMÉ ET BOUTON ACTION */}
+        <div className="space-y-8">
+            <section className="glass p-10 rounded-[3.5rem] border border-orange-500/20 bg-orange-500/5 shadow-2xl text-center space-y-6">
+                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-orange-500">Total à Payer</div>
+                <div className="text-6xl font-black tracking-tighter">${total.toFixed(2)}</div>
+                <div className="h-0.5 w-16 bg-orange-500 mx-auto opacity-30" />
+                <p className="text-sm font-bold text-slate-500 italic">Livraison incluse à Goma</p>
+                
+                <button
+                    onClick={handleOrderConfirm}
+                    disabled={isOrdering}
+                    className="w-full py-7 bg-orange-500 text-white rounded-[2rem] font-black text-xl shadow-2xl shadow-orange-500/40 hover:scale-[1.03] active:scale-95 transition-all flex items-center justify-center gap-4 group border-b-8 border-orange-700/50 relative overflow-hidden disabled:opacity-50"
+                >
+                    {isOrdering ? (
+                         <div className="animate-spin h-6 w-6 border-4 border-white border-t-transparent rounded-full" />
+                    ) : (
+                        <>
+                            {t('btn_confirm')}
+                            <HiLightningBolt size={24} className="text-yellow-300 group-hover:rotate-12 transition-transform" />
+                        </>
+                    )}
+                </button>
+            </section>
 
-               // Envoi vers le Webhook Zapier (Remplacez URL_ZAPIER par la vôtre)
-               try {
-                 await fetch('https://hooks.zapier.com/hooks/catch/1234567/abcde/', { // Placeholder Zapier
-                   method: 'POST',
-                   body: JSON.stringify(orderData),
-                 });
-                 console.log('Zapier Automation Triggered! 🚀');
-               } catch (error) {
-                 console.error('Zapier Error:', error);
-               }
-
-               alert(t('order_sent'));
-               clearCart();
-               navigate('/orders');
-            }}
-            className="w-full max-w-lg mx-auto py-8 bg-orange-500 text-white rounded-[2.5rem] font-black text-3xl shadow-2xl shadow-orange-500/50 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-6 border-b-8 border-orange-700/50 uppercase tracking-widest"
-        >
-            {t('btn_confirm')}
-        </button>
-
-      </motion.div>
+            <p className="text-[10px] font-black text-center text-slate-400 uppercase tracking-widest opacity-50 px-6 leading-relaxed">
+               En confirmant, vos données seront transmises au service logistique pour un traitement immédiat.
+            </p>
+        </div>
+      </div>
     </div>
   );
 }
